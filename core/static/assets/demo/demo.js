@@ -374,7 +374,7 @@ demo = {
         pointHoverRadius: 4,
         pointHoverBorderWidth: 15,
         pointRadius: 4,
-        data: [80, 100, 70, 80, 120, 80],
+        data: [80, 120, 70, 80, 120, 80],
       }]
     };
 

@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
   <title>
-    Django Dashboard Argon - {% block title %} Open-Source Admin Panel {% endblock %} | AppSeed
+    Lemar Dashboard - {% block title %} {% endblock %}
   </title>
 
   <!-- Favicon - loaded as static -->
@@ -37,7 +37,8 @@
   <link href="/static/assets/js/plugins/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link href="/static/assets/css/argon-dashboard.css?v=1.1.0" rel="stylesheet" />
-
+  <link href="/static/assets/plugins/bootstrap-datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+  <link href="/static/assets/plugins/bootstrap-datatable/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
   <!-- Specific CSS goes HERE -->
   {% block stylesheets %}{% endblock stylesheets %}
 
@@ -58,7 +59,9 @@
   {% include "includes/scripts.html" %}
 
   <!-- Specific JS goes HERE --> 
-  {% block javascripts %}{% endblock javascripts %}
+  {% block javascripts %}
+
+  {% endblock javascripts %}
 
 </body>
 
