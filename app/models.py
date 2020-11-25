@@ -23,7 +23,7 @@ class Project(models.Model):
     localization = models.CharField(max_length=255,default="Kraków")
     status = models.CharField(max_length=1,choices=STATUS_CHOICES,default=W_TRAKCIE)
     date_started = models.DateField(auto_now=True)
-    price = models.IntegerField()
+    value = models.IntegerField()
 
     def __str__(self):
         return self.title
