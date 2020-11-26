@@ -6,6 +6,9 @@
 #example_filter {
     margin-top: 50px!important;
 }
+.no-sort {
+  width: 10px
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -107,23 +110,30 @@
                       <table id="example" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Imię i nazwisko</th>
-                                <th>Projekt</th>
-                                <th>Lokalizacja</th>
-                                <th>Status</th>
-                                <th>Data rozpoczęcia</th>
-                                <th>Kwota</th>
+                                <th tabindex='0'>Imię i nazwisko</th>
+                                <th tabindex='1'>Projekt</th>
+                                <th tabindex='2'>Lokalizacja</th>
+                                <th tabindex='3'>Status</th>
+                                <th tabindex='4'>Data rozpoczęcia</th>
+                                <th tabindex='5' >Kwota</th>
+                                <th tabindex='6' class='no-sort'>Usuń</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% csrf_token %}
                             {% for project in projects %}
-                             <tr>
+                             <tr id="{{ project.pk }}">
                                 <td>{{ project.user.first_name}} {{ project.user.last_name }}</td>
                                 <td>{{ project.title }}</td>
                                 <td>{{ project.localization }}</td>
                                 <td>{{ project.get_status_display }}</td>
                                 <td>{{ project.date_started|date:"j E Y" }}</td>
                                 <td>{{ project.value }} zł</td>
+                                <td>
+                                    <a id="delete_button" value="{{project.pk}}" class="delete_button no-sort nav-link">
+                                      <i class="ni ni-fat-remove text-red"></i>
+                                    </a>
+                                </td>
                             </tr>
                             
                             
@@ -171,11 +181,13 @@ $("#datepicker").datepicker({
     autoclose: true,
 });
 
-  $(document).ready(function() {
     //Default data table
 
 
     var table = $('#example').DataTable( {
+        "columnDefs": [
+          { "orderable": false, "targets": 6 }
+        ],
       info: false,
       select: true,
       lengthChange: false,
@@ -185,16 +197,43 @@ $("#datepicker").datepicker({
             "previous": "<"
         },
         "emptyTable": "Brak danych",
-        "search": "Wyszukaj"
+        "search": "Wyszukaj",
+      },
+
 
         
-        },
+        
       buttons: ['excel', 'pdf', 'print', {extend: 'colvis',text: 'Ukryj kolumny'} ]
     } );
 
   table.buttons().container()
       .appendTo( '#example_wrapper .col-md-6:eq(0)' );
     
-    } );
+
   </script>
+
+<script>
+
+$('.delete_button').on('click', function(){
+
+    let confirmation = confirm("Czy na pewno chcesz usunąć ten projekt?");
+    if (confirmation) {
+        let object_id = $(this).attr('value')
+        let url = `project_remove/${object_id}/`;
+        $.ajax({
+           url: url,
+           method: "POST",
+           data: {
+               'csrfmiddlewaretoken': "{{ csrf_token }}"
+           },
+         }).done(
+              function(){
+                $('#'+object_id).fadeOut('slow');
+              }
+            ).fail(
+              function(){alert("Error");}
+            ) 
+    }
+})
+</script>
 {% endblock javascripts %}

@@ -6,7 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django import template
 from . models import Project
 from . forms import ProjectForm
@@ -37,31 +37,37 @@ def profile(request):
         return redirect('profile')
     else:
         return HttpResponse(html_template.render({"projects":projects}, request))
+
+@login_required()
+def project_remove(request, pk):
+    if request.method =="POST":
+        project = Project.objects.filter(pk=pk)
+        project.delete()
+    return redirect('profile')
+
+@login_required(login_url="/login/")
+def pages(request):
+
+    context = {}
+    # All resource paths end in .html.
+    # Pick out the html file name from the url. And load that template.
+    try:
+        
+        load_template      = request.path.split('/')[-1]
+        context['segment'] = load_template
+        
+        html_template = loader.get_template( load_template )
+        return HttpResponse(html_template.render(context, request))
+        
+    except template.TemplateDoesNotExist:
+
+        html_template = loader.get_template( 'page-404.html' )
+        return HttpResponse(html_template.render(context, request))
+
+    except:
     
-
-# @login_required(login_url="/login/")
-# def pages(request):
-
-#     context = {}
-#     # All resource paths end in .html.
-#     # Pick out the html file name from the url. And load that template.
-#     try:
-        
-#         load_template      = request.path.split('/')[-1]
-#         context['segment'] = load_template
-        
-#         html_template = loader.get_template( load_template )
-#         return HttpResponse(html_template.render(context, request))
-        
-#     except template.TemplateDoesNotExist:
-
-#         html_template = loader.get_template( 'page-404.html' )
-#         return HttpResponse(html_template.render(context, request))
-
-#     except:
-    
-#         html_template = loader.get_template( 'page-500.html' )
-#         return HttpResponse(html_template.render(context, request))
+        html_template = loader.get_template( 'page-500.html' )
+        return HttpResponse(html_template.render(context, request))
 
 
 
