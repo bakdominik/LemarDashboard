@@ -32,3 +32,78 @@
   <!--   Argon JS   -->
   <script src="/static/assets/js/argon-dashboard.js"></script>
 
+  <!-- Delete project button -->
+<script>
+    $('.delete_button').on('click', function(){
+    
+        let confirmation = confirm("Czy na pewno chcesz usunąć ten projekt?");
+        if (confirmation) {
+            let object_id = $(this).attr('value')
+            let url = `project_remove/${object_id}/`;
+            $.ajax({
+               url: url,
+               method: "POST",
+               data: {
+                   'csrfmiddlewaretoken': "{{ csrf_token }}"
+               },
+             }).done(
+                  function(){
+                    $('#'+object_id).fadeOut('slow');
+                  }
+                ).fail(
+                  function(){alert("Error");}
+                ) 
+        }
+    })
+</script>
+<!-- Date picker -->
+<script>
+  $.fn.datepicker.dates['pl'] = {
+      days: [ "Niedziela","Poniedziałek","Wtorek","Środa","Czwartek","Piątek","Sobota" ],
+      daysShort: [ "Nie","Pn","Wt","Śr","Czw","Pt","So" ],
+      daysMin: [ "N","Pn","Wt","Śr","Cz","Pt","So" ],
+      months: [ "Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec",
+    "Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień" ],
+      monthsShort: [ "Sty","Lu","Mar","Kw","Maj","Cze",
+    "Lip","Sie","Wrz","Pa","Lis","Gru" ],
+      today: "Dzisiaj",
+      clear: "wyczyść",
+      format: "yyyy-mm-dd",
+      titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+      weekStart: 1,
+      
+  };
+  $("#datepicker").datepicker({
+      language: 'pl',
+      todayHighlight: true,
+      autoclose: true,
+  });
+
+</script>
+<script>
+  $(document).ready(function() {
+//Default data table
+
+
+    var table = $('#example').DataTable( {
+      info: false,
+      select: true,
+      lengthChange: false,
+      "language": {
+        "paginate": {
+            "next": ">",
+            "previous": "<"
+        },
+        "emptyTable": "Brak danych",
+        "search": "Wyszukaj"
+
+        
+        },
+      buttons: ['excel', 'pdf', 'print', {extend: 'colvis',text: 'Ukryj kolumny'} ]
+    } );
+
+  table.buttons().container()
+      .appendTo( '#example_wrapper .col-md-6:eq(0)' );
+    
+    } );
+</script>

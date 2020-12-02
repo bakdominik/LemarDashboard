@@ -2,12 +2,12 @@
 
 {% block title %} Profil {% endblock title %}
 {% block stylesheets %}
-<style type="text/css">
+<style type='text/css'>
 #example_filter {
-    margin-top: 50px!important;
+  margin-top: 50px!important;
 }
 .no-sort {
-  width: 10px
+width: 10px
 }
 </style>
 {% endblock %}
@@ -89,8 +89,8 @@
                             </div>
                             
                             <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
                     </div>
                             </form>
                     </div>
@@ -159,81 +159,6 @@
 
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
-<script>
-$.fn.datepicker.dates['pl'] = {
-    days: [ "Niedziela","Poniedziałek","Wtorek","Środa","Czwartek","Piątek","Sobota" ],
-    daysShort: [ "Nie","Pn","Wt","Śr","Czw","Pt","So" ],
-    daysMin: [ "N","Pn","Wt","Śr","Cz","Pt","So" ],
-    months: [ "Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec",
-	"Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień" ],
-    monthsShort: [ "Sty","Lu","Mar","Kw","Maj","Cze",
-	"Lip","Sie","Wrz","Pa","Lis","Gru" ],
-    today: "Dzisiaj",
-    clear: "wyczyść",
-    format: "dd MM yyyy",
-    titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
-    weekStart: 1,
-    
-};
-$("#datepicker").datepicker({
-    language: 'pl',
-    todayHighlight: true,
-    autoclose: true,
-});
-
-    //Default data table
 
 
-    var table = $('#example').DataTable( {
-        "columnDefs": [
-          { "orderable": false, "targets": 6 }
-        ],
-      info: false,
-      select: true,
-      lengthChange: false,
-      "language": {
-        "paginate": {
-            "next": ">",
-            "previous": "<"
-        },
-        "emptyTable": "Brak danych",
-        "search": "Wyszukaj",
-      },
-
-
-        
-        
-      buttons: ['excel', 'pdf', 'print', {extend: 'colvis',text: 'Ukryj kolumny'} ]
-    } );
-
-  table.buttons().container()
-      .appendTo( '#example_wrapper .col-md-6:eq(0)' );
-    
-
-  </script>
-
-<script>
-
-$('.delete_button').on('click', function(){
-
-    let confirmation = confirm("Czy na pewno chcesz usunąć ten projekt?");
-    if (confirmation) {
-        let object_id = $(this).attr('value')
-        let url = `project_remove/${object_id}/`;
-        $.ajax({
-           url: url,
-           method: "POST",
-           data: {
-               'csrfmiddlewaretoken': "{{ csrf_token }}"
-           },
-         }).done(
-              function(){
-                $('#'+object_id).fadeOut('slow');
-              }
-            ).fail(
-              function(){alert("Error");}
-            ) 
-    }
-})
-</script>
 {% endblock javascripts %}

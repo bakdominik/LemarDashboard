@@ -13,7 +13,8 @@ urlpatterns = [
     # Avoid using your .html in your resources.
     # Or create a separate django app.
     path('profile/', views.profile, name='profile'),
-    path('profile/project_remove/<int:pk>/', views.project_remove, name='project_remove'),
+    path('project_remove/<int:pk>/', views.project_remove_index, name='project_remove'),
+    path('profile/project_remove/<int:pk>/', views.project_remove_profile, name='project_remove'),
     re_path(r'^.*\.html', views.pages, name='pages'),
     # The home page
     path('', views.index, name='home'),

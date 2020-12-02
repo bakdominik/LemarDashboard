@@ -1,45 +1,48 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django import template
 from . models import Project
-from . forms import ProjectForm
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from django.db.models.functions import TruncMonth
+from django.db.models.aggregates import Count
+from django.utils.dateformat import DateFormat
+
 
 @login_required(login_url="/login/")
 def index(request):
-    
-    context = {}
-    context['segment'] = 'index'
-
+    projects = Project.objects.all()
     html_template = loader.get_template( 'index.html' )
-    return HttpResponse(html_template.render(context, request))
+
+
+    new_projects_chart_data=get_new_projects_chart_data(Project)
+    new_labels = list(new_projects_chart_data.keys())
+    new_data = list(new_projects_chart_data.values())
+    if request.method == 'POST':
+        return add_project(request,'home')
+    return HttpResponse(html_template.render({"projects":projects,"new_labels":new_labels,"new_data":new_data}, request))
 
 @login_required(login_url="/login/")
 def profile(request):
     projects = Project.objects.filter(user=request.user)
     html_template = loader.get_template( 'profile.html' )
-
+    
     if request.method == 'POST':
-        project = Project()
-        project.user = request.user
-        project.title = request.POST['title']
-        project.localization = request.POST['localization']
-        project.date_started = request.POST['datepicker']
-        project.status = request.POST['status']
-        project.value = request.POST['value']
-        project.save()
-        return redirect('profile')
+        return add_project(request,'profile')
     else:
         return HttpResponse(html_template.render({"projects":projects}, request))
 
 @login_required()
-def project_remove(request, pk):
+def project_remove_index(request, pk):
+    if request.method =="POST":
+        project = Project.objects.filter(pk=pk)
+        project.delete()
+    return redirect('home')
+
+@login_required()
+def project_remove_profile(request, pk):
     if request.method =="POST":
         project = Project.objects.filter(pk=pk)
         project.delete()
@@ -69,5 +72,36 @@ def pages(request):
         html_template = loader.get_template( 'page-500.html' )
         return HttpResponse(html_template.render(context, request))
 
+# utils
+
+def add_project(request,url):
+    project = Project()
+    project.user = request.user
+    project.title = request.POST['title']
+    project.localization = request.POST['localization']
+    project.date_started = request.POST['datepicker'].format('Y-m-d')
+    project.status = request.POST['status']
+    project.value = request.POST['value']
+    project.save()
+    return redirect(url)
 
 
+def get_new_projects_chart_data(Model):
+    months_before = 6
+    now = datetime.utcnow()
+    from_datetime = now - relativedelta(months=months_before)
+    modified_from_datetime = from_datetime.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    aggregated = Model.objects.filter(date_started__gte=modified_from_datetime).annotate(month=TruncMonth('date_started')).values('month').annotate(sum=Count('month'))
+
+    monthsShort = {'1':"Sty",'2':"Lu",'3':"Mar",'4':"Kw",'5':"Maj",'6':"Cze",'7':"Lip",'8':"Sie",'9':"Wrz",'10':"Pa",'11':"Lis",'12':"Gru"} 
+    keys = []
+    for i in range(1,6):
+        if modified_from_datetime.month+i%12:
+            keys.append(monthsShort[f'{modified_from_datetime.month+i}'])
+
+    data = {key: 0 for key in keys}
+
+    for project in aggregated:
+        data[monthsShort[f'{project["month"].month}']]=project['sum']
+
+    return data

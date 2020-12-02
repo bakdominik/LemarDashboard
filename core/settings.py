@@ -104,13 +104,16 @@ LANGUAGE_CODE = 'pl-pl'
 
 TIME_ZONE = 'UTC'
 
+DATE_INPUT_FORMATS = ['%j-%E-%Y']
+
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
 
-#############################################################
+##################
+# ###########################################
 # SRC: https://devcenter.heroku.com/articles/django-assets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
