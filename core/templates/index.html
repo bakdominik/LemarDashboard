@@ -139,6 +139,7 @@ width: 10px
               <div class="row align-items-center">
                 <div class="col">
                   <h2 class="mb-0">Liczba nowych projektów</h2>
+                  {{ test }}
                 </div>
               </div>
             </div>
@@ -290,7 +291,82 @@ width: 10px
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
- var OrdersChart = (function() {
+//
+// Sales chart
+//
+
+var SalesChart = (function() {
+
+// Variables
+
+var $chart = $('#chart-sales');
+
+
+// Methods
+
+function init($chart) {
+
+  var salesChart = new Chart($chart, {
+    type: 'line',
+    options: {
+      scales: {
+        yAxes: [{
+          gridLines: {
+            lineWidth: 1,
+            color: Charts.colors.gray[900],
+            zeroLineColor: Charts.colors.gray[900]
+          },
+          ticks: {
+            callback: function(value) {
+              if (!(value % 10)) {
+                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' PLN';
+              }
+            }
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var label = data.datasets[item.datasetIndex].label || '';
+            var yLabel = item.yLabel;
+            var content = '';
+
+            if (data.datasets.length > 1) {
+              content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+            }
+
+            content += '<span class="popover-body-value">' + yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' PLN</span>';
+            return content;
+          }
+        }
+      }
+    },
+    data: {
+      labels: {{ sales_labels|safe }},
+      datasets: [{
+        data: {{ sales_data|safe }}
+      }]
+    }
+  });
+
+  // Save to jQuery object
+
+  $chart.data('chart', salesChart);
+
+};
+
+
+// Events
+
+if ($chart.length) {
+  init($chart);
+}
+
+})();
+
+
+var OrdersChart = (function() {
 
 //
 // Variables
@@ -365,46 +441,8 @@ if ($chart.length) {
 
 })();
 
-console.log(new_projects)
 
 
 
-{% comment %} var ctx = document.getElementById('chart-orders').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: {{ new_labels|safe }},
-        datasets: [{
-            label: '# of Votes',
-            data: {{ new_data|safe }},
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-}); {% endcomment %}
 </script>
 {% endblock javascripts %}

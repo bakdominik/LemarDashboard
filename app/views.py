@@ -7,7 +7,7 @@ from . models import Project
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Sum
 from django.utils.dateformat import DateFormat
 
 
@@ -16,13 +16,17 @@ def index(request):
     projects = Project.objects.all()
     html_template = loader.get_template( 'index.html' )
 
+    # New project chart
 
-    new_projects_chart_data=get_new_projects_chart_data(Project)
-    new_labels = list(new_projects_chart_data.keys())
-    new_data = list(new_projects_chart_data.values())
+    new_labels, new_data = get_chart_data(Project,5,Count('month'))
+
+    # Sales chart
+
+    sales_labels, sales_data = get_chart_data(Project,7,Sum('value'))
+
     if request.method == 'POST':
         return add_project(request,'home')
-    return HttpResponse(html_template.render({"projects":projects,"new_labels":new_labels,"new_data":new_data}, request))
+    return HttpResponse(html_template.render({"projects":projects,"new_labels":new_labels,"new_data":new_data, "sales_labels":sales_labels,"sales_data":sales_data}, request))
 
 @login_required(login_url="/login/")
 def profile(request):
@@ -86,22 +90,24 @@ def add_project(request,url):
     return redirect(url)
 
 
-def get_new_projects_chart_data(Model):
-    months_before = 6
+def get_chart_data(Model,months_before,aggregation):
     now = datetime.utcnow()
     from_datetime = now - relativedelta(months=months_before)
     modified_from_datetime = from_datetime.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    aggregated = Model.objects.filter(date_started__gte=modified_from_datetime).annotate(month=TruncMonth('date_started')).values('month').annotate(sum=Count('month'))
+    aggregated = Model.objects.filter(date_started__gte=modified_from_datetime).annotate(month=TruncMonth('date_started')).values('month').annotate(sum=aggregation)
 
     monthsShort = {'1':"Sty",'2':"Lu",'3':"Mar",'4':"Kw",'5':"Maj",'6':"Cze",'7':"Lip",'8':"Sie",'9':"Wrz",'10':"Pa",'11':"Lis",'12':"Gru"} 
     keys = []
-    for i in range(1,6):
-        if modified_from_datetime.month+i%12:
+    for i in range(months_before):
+        if modified_from_datetime.month+i<13:
             keys.append(monthsShort[f'{modified_from_datetime.month+i}'])
+        else:
+            keys.append(monthsShort[f'{(modified_from_datetime.month+i)%12}'])
 
     data = {key: 0 for key in keys}
 
     for project in aggregated:
         data[monthsShort[f'{project["month"].month}']]=project['sum']
 
-    return data
+    return (list(data.keys()),list(data.values()))
+
