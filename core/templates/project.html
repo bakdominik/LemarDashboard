@@ -1,0 +1,112 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Profil {% endblock title %}
+{% block stylesheets %}
+<style type='text/css'>
+#example_filter {
+  margin-top: 50px!important;
+}
+.no-sort {
+width: 10px
+}
+</style>
+{% endblock %}
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-lg-8 d-flex align-items-center" >
+      <!-- Header container -->
+      <div class="container-fluid d-flex align-items-center">
+        <div class="row">
+          <div class="col-12 mt-5">
+            <h2 class="display-3 text-white">Szczegóły projektu TEST123456</h2>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid mt--7">
+        <div class="card py-4 mb-5 shadow">
+        <div class="card-body">
+        <div class="row">
+                    <div class="col-xl-8 px-5">
+                        <div class="row my-2">
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                            <div class="text-center col-6">
+                                <input class='form-control' placeholder='Test'>
+                            </div>
+                        </div>
+                        <div class="row p-3 mt-5">
+                            <h3>Inwestor</h3>
+                            <textarea style='resize: none' class='form-control' name="" id="" cols="25" rows="3">Polska spóła gazownictwa Sp. z o o. Oddział zakład gazowniczy w Krakowie ul. Gazowa 16, 31-060 Kraków</textarea>
+                        </div>
+                        <div class="row p-3 mt-5">
+                            <h3>Obiekt</h3>
+                            <textarea style='resize: none' class='form-control' name="" id="" cols="25" rows="10">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem</textarea>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 px-5">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 class='mb-3'>Checklista</h3>
+                                <div class="row px-3">
+                                    <input style='margin-top: 6px' type="radio" aria-label="Radio button for following text input">
+                                    <p class='mx-3'><del>Zlecenie z gazowni</del></p>
+                                </div>
+                                <div class="row px-3">
+                                    <input style='margin-top: 6px' type="radio" aria-label="Radio button for following text input">
+                                    <p class='mx-3'>Warunki techniczne</p>
+                                </div>
+                                <div class="row px-3">
+                                    <input style='margin-top: 6px' type="radio" aria-label="Radio button for following text input">
+                                    <p class='mx-3'>Wypis i wyrys</p>
+                                </div>
+                                <div class="row px-3">
+                                    <input style='margin-top: 6px' class='text-center' type="radio" aria-label="Radio button for following text input">
+                                    <p class='mx-3'>Mapa do celów projektowych</p>
+                                </div>
+                                <div class="row px-3">
+                                    <input style='margin-top: 6px' type="radio" aria-label="Radio button for following text input">
+                                    <p class='mx-3'>ZUP</p>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+          </div>
+    </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+
+{% endblock javascripts %}

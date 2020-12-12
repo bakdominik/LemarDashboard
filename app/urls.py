@@ -9,14 +9,10 @@ from app import views
 from django.conf.urls import url
 
 urlpatterns = [
-    # Matches any html file - to be used for gentella
-    # Avoid using your .html in your resources.
-    # Or create a separate django app.
     path('profile/', views.profile, name='profile'),
-    path('project_remove/<int:pk>/', views.project_remove_index, name='project_remove'),
-    path('profile/project_remove/<int:pk>/', views.project_remove_profile, name='project_remove'),
-    re_path(r'^.*\.html', views.pages, name='pages'),
-    # The home page
+    # path('project_remove/<int:pk>/', views.project_remove_index, name='project_remove'),
+    # path('profile/project_remove/<int:pk>/', views.project_remove_profile, name='project_remove'),
+    path('project/<int:pk>/',views.project),
     path('', views.index, name='home'),
 
 

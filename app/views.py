@@ -38,26 +38,16 @@ def profile(request):
     else:
         return HttpResponse(html_template.render({"projects":projects}, request))
 
-@login_required()
-def project_remove_index(request, pk):
-    if request.method =="POST":
-        project = Project.objects.filter(pk=pk)
-        project.delete()
-    return redirect('home')
-
-@login_required()
-def project_remove_profile(request, pk):
-    if request.method =="POST":
-        project = Project.objects.filter(pk=pk)
-        project.delete()
-    return redirect('profile')
+@login_required(login_url="/login/")
+def project(request,pk):
+    project = Project.objects.get(pk=pk)
+    html_template = loader.get_template( 'project.html' )
+    return HttpResponse(html_template.render({"project":project}, request))
 
 @login_required(login_url="/login/")
 def pages(request):
 
     context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
     try:
         
         load_template      = request.path.split('/')[-1]
@@ -111,3 +101,16 @@ def get_chart_data(Model,months_before,aggregation):
 
     return (list(data.keys()),list(data.values()))
 
+
+# def project_remove_index(request, pk):
+#     if request.method =="POST":
+#         project = Project.objects.filter(pk=pk)
+#         project.delete()
+#     return redirect('home')
+
+# @login_required()
+# def project_remove_profile(request, pk):
+#     if request.method =="POST":
+#         project = Project.objects.filter(pk=pk)
+#         project.delete()
+#     return redirect('profile')
