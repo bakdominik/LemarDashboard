@@ -72,10 +72,6 @@
             <i class="ni ni-single-02"></i>
             <span>Mój profil</span>
           </a>
-          <a href="./examples/profile.html" class="dropdown-item">
-            <i class="ni ni-support-16"></i>
-            <span>Wsparcie</span>
-          </a>
           <div class="dropdown-divider"></div>
           <a href="{% url 'logout' %}" class="dropdown-item">
             <i class="ni ni-user-run"></i>
@@ -131,11 +127,6 @@
         <li class="pt-5 nav-item {% if 'index' in segment %} active {% endif %}">
           <a class="nav-link" href="/">
             <i class="ni ni-tv-2 text-primary"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item {% if 'icons' in segment %} active {% endif %}">
-          <a class="nav-link" href="/icons.html">
-            <i class="ni ni-planet text-blue"></i> Icons
           </a>
         </li>
         <li class="nav-item {% if 'profile' in segment %} active {% endif %}">

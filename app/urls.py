@@ -9,6 +9,7 @@ from app import views
 from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('profile/', views.profile, name='profile'),
@@ -21,6 +22,6 @@ urlpatterns = [
     path('update_file/<int:pk>/',views.update_file, name='update_file'),
     path('update_invoice_status/<int:pk>/',views.update_invoice_status, name='update_invoice_status'),
     path('', views.index, name='home'),
-
+    path('settings/',views.settings, name='settings'),
 
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

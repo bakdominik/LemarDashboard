@@ -9,7 +9,9 @@ from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
 from django.db.models.aggregates import Count, Sum
 from django.utils.dateformat import DateFormat
-
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 @login_required(login_url="/login/")
 def index(request):
@@ -17,16 +19,16 @@ def index(request):
     html_template = loader.get_template( 'index.html' )
 
     # New project chart
-
     new_labels, new_data = get_chart_data(Project,5,Count('month'))
-
     # Sales chart
-
     sales_labels, sales_data = get_chart_data(Project,7,Sum('value'))
+
+    user_active = len(Project.objects.filter(user=request.user,status='W trakcie'))
+    user_all = len(Project.objects.filter(user=request.user))
 
     if request.method == 'POST':
         return add_project(request,'home')
-    return HttpResponse(html_template.render({"projects":projects,"new_labels":new_labels,"new_data":new_data, "sales_labels":sales_labels,"sales_data":sales_data}, request))
+    return HttpResponse(html_template.render({"projects":projects,"new_labels":new_labels,"new_data":new_data, "sales_labels":sales_labels,"sales_data":sales_data,'user_active':user_active,'user_all':user_all}, request))
 
 @login_required(login_url="/login/")
 def profile(request):
@@ -103,26 +105,22 @@ def check(request,pk):
         return redirect('/project/'+str(pk))
 
 @login_required(login_url="/login/")
-def pages(request):
+def settings(request):
+    user_active = len(Project.objects.filter(user=request.user,status='W trakcie'))
+    user_finished = len(Project.objects.filter(user=request.user,status='Zakończony'))
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Hasło zostało zmienione')
+        else:
+            return render(request, 'settings.html',{'user_active':user_active,'user_finished':user_finished,'form':form})
 
-    context = {}
-    try:
-        
-        load_template      = request.path.split('/')[-1]
-        context['segment'] = load_template
-        
-        html_template = loader.get_template( load_template )
-        return HttpResponse(html_template.render(context, request))
-        
-    except template.TemplateDoesNotExist:
+    form = PasswordChangeForm(request.user)
 
-        html_template = loader.get_template( 'page-404.html' )
-        return HttpResponse(html_template.render(context, request))
-
-    except:
-    
-        html_template = loader.get_template( 'page-500.html' )
-        return HttpResponse(html_template.render(context, request))
+    html_template = loader.get_template( 'settings.html' )
+    return HttpResponse(html_template.render({'user_active':user_active,'user_finished':user_finished,'form':form},request))
 
 # utils
 

@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %} Profil {% endblock title %}
 
 {% block content %}
@@ -16,41 +16,30 @@
     <div class="container-fluid mt--7">
 
       <div class="row">
-        <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+        <div class="col-xl-4 order-xl-2 mb-xl-0">
           <div class="card card-profile shadow">
-            <div class="row justify-content-center">
-              <div class="col-lg-3 pb-5 order-lg-2">
-                <div class="card-profile-image">
-                  <a href="#">
-                    <img src="/static/assets/img/theme/team-4-800x800.jpg" class="rounded-circle">
-                </a>
-            </div>
-          </div>
-        </div>
-        <div class="card-body pt-3 pt-md-4">
+        <div class="card-body">
           <div class="row">
+
             <div class="col">
-              <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+              <div class="mt-4 text-center">
+                <h2>
+                  {{ request.user.username }} {{ request.user.last_name }}
+                </h2>
+              </div>
+              <div class="card-profile-stats d-flex justify-content-center">
                 <div>
-                  <span class="heading">22</span>
+                  <span class="heading">{{ user_active}}</span>
                   <span class="description">Projekty w trakcie</span>
                 </div>
                 <div>
-                  <span class="heading">10</span>
+                  <span class="heading">{{ user_finished}}</span>
                   <span class="description">Projekty zakończone</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="text-center">
-            <h3>
-              {{ request.user.username }}
-            </h3>
-            <div class="h5 font-weight-300">
-              {{ request.user.email }}
-            </div>
 
-          </div>
             </div>
           </div>
         </div>
@@ -59,46 +48,49 @@
             <div class="card-header bg-white border-0">
               <div class="row align-items-center">
                 <div class="col-8">
-                  <h3 class="mb-0">Moje konto</h3>
+                  <h3 class="mb-0">Zmiana hasła</h3>
                 </div>
+                    
               </div>
+              
             </div>
-            <div class="card-body">
-              <form>
-                <h6 class="heading-small text-muted mb-4">Dane</h6>
+            <div class="card-body bg-white">
                 <div class="pl-lg-4">
-                  <div class="row">
+                {% for message in messages %}
+    <p class="{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+                    {% comment %} {% for field in form.fields  %}
+                    {% for error in field.errors %}
+                    {{error}}
+                    {% endfor %}
+                    {% endfor %} {% endcomment %}
+                    <form method="post">
+                      {% csrf_token %}
+                      {{ form|crispy }}
+                      <button class="btn btn-sm btn-primary" type="submit">Zapisz</button>
+                    </form>
+                    {% comment %} <form action="{% url 'settings' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="col-lg-6">
+                      
                       <div class="form-group">
-                        <label class="form-control-label" for="input-username">Nazwa użytkownika</label>
-                        <input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" 
-                               value="{{ request.user.username }}" readonly>
+                        <label class="form-control-label" for="input-username">Hasło</label>
+                        <input autocomplete="off" type="password" id="password" class="form-control form-control-alternative" placeholder="Hasło" 
+                               >
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
-                        <label class="form-control-label" for="input-email">Email</label>
-                        <input type="email" id="input-email" class="form-control form-control-alternative" 
-                               placeholder="{{ request.user.email }}">
+                        <label class="form-control-label" for="input-email">Powtórz hasło</label>
+                        <input autocomplete="off" type="password" id="repeat_password" class="form-control form-control-alternative" 
+                               placeholder="Powtóz hasło">
+                      </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-first-name">Imię</label>
-                        <input type="text" id="input-first-name" class="form-control form-control-alternative" >
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-last-name">Nazwisko</label>
-                        <input type="text" id="input-last-name" class="form-control form-control-alternative" >
-                      </div>
-                    </div>
-                  </div>
+                    <button type="submit" class="btn btn-sm btn-primary">Zapisz</button>
+                  </form> {% endcomment %}
                 </div>
-              </form>
+
             </div>
           </div>
         </div>
