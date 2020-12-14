@@ -67,12 +67,12 @@ width: 10px
                         
                         <div class="row p-3 mt-5">
                             <h2 class='mb-3'>Inwestor</h2>
-                            <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="investor" id="" cols="25" rows="3">{{project.investor}}</textarea>
+                            <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="investor" cols="25" rows="3">{{project.investor}}</textarea>
                         </div>
 
                         <div class="row p-3 mt-5">
                             <h2 class='mb-3'>Obiekt</h2>
-                            <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="project_object" id="" cols="25" rows="10">{{project.project_object}}</textarea>
+                            <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="project_object" cols="25" rows="10">{{project.project_object}}</textarea>
                         </div>
 
                     </form>
@@ -196,11 +196,11 @@ width: 10px
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <input name='invoice_title' class="mb-4 form-control" type="text" placeholder="Tytuł rachunku">
-                                                <select required name="status" id="status" class="mb-4 form-control">
+                                                <select required name="status" class="mb-4 form-control">
                                                     <option selected>Do opłacenia</option>
                                                     <option>Opłacony</option>
                                                 </select>
-                                                <input name='invoice' type="file" class="form-control-file" id="">
+                                                <input name='invoice' type="file" class="form-control-file">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -217,23 +217,7 @@ width: 10px
                         </div>
                         <div class='' style='overflow: auto;height:300px;overflow-x:hidden;'>
                         <div class='row'>
-                            
-                                {% comment %} {% for invoice in invoices  %}
-                                <div class=''>
-                                    <a  href="/static{{invoice.invoice.url }}" download ><h3 class='mt-2 text-white'>{{ invoice.title}}</h3></a>
-                                    <hr class='mt-2 mb-5' style='border-top: 1px solid white'>
-                                </div>
-                                {% endfor %} {% endcomment %}
-                                {% comment %} <div style='border-right: 1px solid white'class='col-6'>
-                                    <a  href="/static{{invoice.invoice.url }}" download ><h3 class='mt-2 text-white'>{{ invoice.title}}Tytuł</h3></a>
-                                    <hr class='mt-2 mb-5' style='border-top: 1px solid white'>
-                                </div>
-                                <div class='col-6'>
-                                    <h3 class='mt-2 text-white'>Status</h3>
-                                    <hr class='mt-2 mb-5' style='border-top: 1px solid white'>
-                                </div> {% endcomment %}
-                                
-                                <table id="rachunki" class="table table-bordered">
+                            <table id="rachunki" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th class='text-white'tabindex='0'>Tytuł rachunku</th>
@@ -242,18 +226,21 @@ width: 10px
                                 </thead>
                                 <tbody>
                                     {% for invoice in invoices %}
-                                    <tr id="{{ project.pk }}">
+
+                                    <tr id="{{ invoice.pk }}">
                                         <td><a  href="{{invoice.invoice.url }}" download ><h4 class='mt-3 text-white'>{{ invoice.title}}</h4></a></td>
                                         <td>
+
                                             <select style='background-color: transparent;
-                                                color: white;' required name="status" id="status" class="form-control">
+                                                color: white;' required name="status" id="{{invoice.pk}}" class="status-form form-control">
                                             <option style='background-color: #19214D;
-            color: white;' selected>Opłacony</option>
+                                            color: white;' selected>{{invoice.status}}</option>
                                             <option style='background-color: #19214D;
-            color: white;'>Do opłacenia</option>
-                                            </select></td>
+                                            color: white;'> {% if invoice.status == "Do opłacenia" %}Opłacony{% else %}Do opłacenia{% endif %} </option>
+   
                                     </tr>
-                                    {% endfor %}   
+                                    {% endfor %}  
+                                     
                                 </tbody>
                             </table>
 
@@ -276,6 +263,7 @@ width: 10px
 {% block javascripts %}
 <script>
 {% comment %} AJAX checlist {% endcomment %}
+
 var elements = document.getElementsByClassName("checklist-radio");
 for (var i = 0; i < elements.length; i++) {
     elements[i].addEventListener('change', function() {
@@ -313,9 +301,24 @@ form.addEventListener('change',function(){
         }
     }); 
 })
+{% comment %} Ajax invoice status update {% endcomment %}
+var status_form = document.getElementsByClassName('status-form');
+for (var i = 0; i < status_form.length; i++) {
+    status_form[i].addEventListener('change', function() {
+        console.log(this.value,this.id)
+        let url = `/update_invoice_status/${this.id}/`;
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            status: this.value
+            },
+        })
+            
+    });
     
-
-
+}
 
 </script>
 

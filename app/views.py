@@ -85,6 +85,15 @@ def update_invoice(request, pk):
         return redirect('/project/'+str(pk))
 
 @login_required(login_url="/login/")
+def update_invoice_status(request, pk):
+    if request.method == "POST":
+        invoice = ProjectInvoice.objects.get(pk=pk)
+        invoice.status = request.POST['status']
+        invoice.save()
+        return redirect('/project/'+str(invoice.project.pk))
+
+
+@login_required(login_url="/login/")
 def check(request,pk):
     if request.method == "POST":
         project = Project.objects.get(pk=pk)

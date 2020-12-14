@@ -17,8 +17,9 @@ urlpatterns = [
     path('project/<int:pk>/',views.project),
     path('update/<int:pk>/',views.update, name='update'),
     path('check/<int:pk>/',views.check, name='check'),
-    path('update_file/<int:pk>/',views.update_file, name='update_file'),
     path('update_invoice/<int:pk>/',views.update_invoice, name='update_invoice'),
+    path('update_file/<int:pk>/',views.update_file, name='update_file'),
+    path('update_invoice_status/<int:pk>/',views.update_invoice_status, name='update_invoice_status'),
     path('', views.index, name='home'),
 
 
