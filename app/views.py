@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django import template
-from . models import Project
+from . models import Project, Checklist, ProjectFile, ProjectInvoice
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
@@ -41,8 +41,57 @@ def profile(request):
 @login_required(login_url="/login/")
 def project(request,pk):
     project = Project.objects.get(pk=pk)
+    files = ProjectFile.objects.filter(project=pk)
+    invoices = ProjectInvoice.objects.filter(project=pk)
     html_template = loader.get_template( 'project.html' )
-    return HttpResponse(html_template.render({"project":project}, request))
+    return HttpResponse(html_template.render({"project":project,"files":files,"invoices":invoices}, request))
+
+
+
+@login_required(login_url="/login/")
+def update(request,pk):
+    if request.method == "POST":
+        project = Project.objects.get(pk=pk)
+        project.user = request.user
+        project.title = request.POST['title']
+        project.localization = request.POST['localization']
+        project.date_started = request.POST['datepicker'].format('YYYY-MM-DD')
+        project.status = request.POST['status']
+        project.value = request.POST['value']
+        project.project_object = request.POST['project_object']
+        project.investor = request.POST['investor']
+        project.save()
+        return redirect('/project/'+str(pk))
+
+@login_required(login_url="/login/")
+def update_file(request,pk):
+    if request.method == "POST":
+        project_file = ProjectFile()
+        project_file.title = request.POST['file_title']
+        project_file.file = request.FILES['file']
+        project_file.project = Project.objects.get(pk=pk)
+        project_file.save()
+        return redirect('/project/'+str(pk))
+
+@login_required(login_url="/login/")
+def update_invoice(request, pk):
+    if request.method == "POST":
+        invoice = ProjectInvoice()
+        invoice.title = request.POST['invoice_title']
+        invoice.invoice = request.FILES['invoice']
+        invoice.project = Project.objects.get(pk=pk)
+        invoice.status = request.POST['status']
+        invoice.save()
+        return redirect('/project/'+str(pk))
+
+@login_required(login_url="/login/")
+def check(request,pk):
+    if request.method == "POST":
+        project = Project.objects.get(pk=pk)
+        checklist = project.checklist
+        setattr(checklist, request.POST['checked'], True)
+        checklist.save()
+        return redirect('/project/'+str(pk))
 
 @login_required(login_url="/login/")
 def pages(request):
@@ -77,6 +126,9 @@ def add_project(request,url):
     project.status = request.POST['status']
     project.value = request.POST['value']
     project.save()
+    checklist = Checklist()
+    checklist.project = project
+    checklist.save()
     return redirect(url)
 
 

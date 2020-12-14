@@ -1,0 +1,278 @@
+USE master;
+go
+IF EXISTS(select * from sys.databases where name='biblioteka')
+ALTER DATABASE biblioteka SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE if exists biblioteka
+go
+CREATE DATABASE biblioteka collate polish_ci_as
+go
+USE biblioteka
+go
+
+/*instrukcje tworzace baze danych dla biblioteki i wpisujace do niej dane - skladnia T-SQL
+*/
+
+create table Gatunki (
+gatunek varchar(20) primary key);
+
+create table TypyTworcow (
+TypTworcy varchar(20) primary key);
+
+create table Tworcy (
+IdTworcy int identity primary key,
+NazwiskoTworcy varchar(30) not null,
+ImieTworcy varchar(30) not null,
+RokUrodzenia smallint);
+
+create table Klienci (
+IdKlienta int identity primary key,
+NrDowodu char(9) unique,
+NazwiskoKlienta varchar(30) not null,
+ImieKlienta varchar(30),
+Plec char check (plec in ('k','m')),
+DataUrodzenia date,
+Ulica varchar(50),
+KodPocztowy char(6),
+Miejscowosc varchar(30),
+DataWprowadzenia date);
+
+create table Cennik (
+RodzajKsiazki varchar(20) primary key,
+OplataZa7Dni smallmoney not null);
+
+create table Ksiazki (
+IdKsiazki int identity primary key,
+TytulKsiazki varchar(150) not null,
+RokWydania smallint,
+RodzajKsiazki varchar(20) not null,
+constraint rck foreign key(RodzajKsiazki) references Cennik(RodzajKsiazki));
+
+create table KsiazkiTworcy (
+IdKsiazki int,
+IdTworcy int,
+TypTworcy varchar(20),
+primary key (IdKsiazki, IdTworcy),
+constraint rktk foreign key(IdKsiazki) references Ksiazki(IdKsiazki),
+constraint rktt foreign key(IdTworcy) references Tworcy(IdTworcy),
+constraint rkttt foreign key(TypTworcy) references TypyTworcow(TypTworcy));
+
+create table KsiazkiGatunki (
+IdKsiazki int,
+Gatunek varchar(20),
+primary key (IdKsiazki, Gatunek),
+constraint rkgg foreign key(Gatunek) references Gatunki(Gatunek),
+constraint rkgk foreign key(IdKsiazki) references Ksiazki(IdKsiazki));
+
+create table Egzemplarze (
+IdEgzemplarza int identity primary key,
+IdKsiazki int not null,
+constraint rek foreign key(IdKsiazki) references Ksiazki(IdKsiazki));
+
+create table Wypozyczenia (
+IdWypozyczenia int identity primary key,
+IdEgzemplarza int not null,
+IdKlienta int not null,
+DataWypozyczenia date not null,
+OplataZa7Dni smallmoney not null,
+DataZwrotu date,
+constraint rwk foreign key(IdKlienta) references Klienci(IdKlienta),
+constraint rwe foreign key(IdEgzemplarza) references Egzemplarze(IdEgzemplarza));
+
+create table Doplaty (
+IdWypozyczenia int primary key,
+Doplata smallmoney not null,
+constraint rdw foreign key(IdWypozyczenia) references Wypozyczenia(IdWypozyczenia));
+
+
+insert into cennik values ('bestseller', 14),('hit',7),('nowość',10.50),('standard',3.50);
+
+insert into gatunki values ('bajka'),('beletrystyka'),('fantastyka'),('geografia'),('historia'),('kryminał'),('kulinaria'),('nauka'),('poezja'),('przygoda'),('przyroda'),('psychologia'),('romans'),('sport'),('thriller')
+
+insert into TypyTworcow values ('autor'), ('redaktor');
+
+insert into klienci values ('ABC396273','Kowalski','Ireneusz','M','19911204','Komandosów 23','31-210','Kraków','20160402');
+insert into klienci values ('CGZ835671','Malinowska','Urszula','K','19940825','Wielicka 2/45','31-045','Kraków','20160611');
+insert into klienci values ('JFK807634','Kowalczyk','Maciej','M','19900220','Mała 3','30-210','Kraków','20160611');
+insert into klienci values ('KLO298091','Kowalczyk','Maciej','M','19901209','Krótka 23/35','31-190','Kraków','20160611');
+insert into klienci values ('MJW986412','Kowalski','Wojciech','M','19881031','Zielona 28','29-200','Myślenice','20160915');
+insert into klienci values ('KLA109235','Burzyńska','Kamila','K','19910223','Kosynierów 23','30-156','Kraków','20170110');
+insert into klienci values ('WMZ908901','Kwiatkowska','Anna','K','19931130','Miła 24/6','26-201','Olkusz','20170320');
+insert into klienci values ('MKX965467','Burzyńska','Kamila','K','19940901','Krótka 2/9','31-201','Kraków','20170325');
+insert into klienci values ('MWD617223','Bielecki','Wojciech','M','19871025','Leśna 12','31-190','Kraków','20170326');
+insert into klienci values ('KLP988972','Kowalczyk','Maciej','M','19890621','Ułańska 2/21','30-910','Proszowice','20170410');
+insert into klienci values ('WAW320981','Burzyński','Wojciech','M','19900212','Leśna 23','31-201','Kraków','20170425');
+insert into klienci values ('KAN363728','Kwiatkowski','Jerzy','M','19910123','Lipowa 18/2','31-023','Niepołomice','20170502');
+insert into klienci values ('MWG812021','Kowalski','Ireneusz','M','19881002','Kręta 64','31-284','Kraków','20170916');
+insert into klienci values ('KAS935262','Michalska','Iwona','K','19891221','Asfaltowa 21','31-219','Kraków','20180112');
+insert into klienci values ('WEW835342','Malinowska','Urszula','K','19861002','Kamienna 3/45','31-273','Kraków','20180321');
+insert into klienci values ('MDX152662','Kochanowska','Dominika','K','19930529','Długa 9','31-263','Kraków','20180612');
+insert into klienci values ('KAA937651','Michalska','Iwona','K','19891221','Okrężna 5/43','30-126','Kraków','20180721');
+insert into klienci values ('WXG415267','Czachorowski','Wojciech','M','19910203','Żółta 3/81','26-374','Niepołomice','20180822');
+insert into klienci values ('MDZ415261','Czachorowski','Wojciech','M','19910204','Mieszka I 22/3','31-290','Kraków','20180901');
+insert into klienci values ('KUR896412','Nowicki','Michał','M','19871003','Okólna 6/5','31-234','Kraków','20180902');
+insert into klienci values ('KMK536272','Muszyńska','Barbara','K','19920820','Zielona 23/45','31-123','Kraków','20180902');
+insert into klienci values ('KTL162735','Kochanowska','Urszula','K','19890203','Złota 7/5','31-234','Kraków','20180902');
+insert into klienci values ('MSG366241','Burzyńska','Kamila','K','19950315','Maślana 41/32','30-213','Kraków','20190318');
+insert into klienci values ('JAT725514','Janiszewska','Urszula','K','19880517','Zielona 34/21','31-210','Kraków','20190520');
+insert into klienci values ('ANC255142','Wójcik','Monika','K','19920124','Miła 3','31-220','Kraków','20190627');
+insert into klienci values ('JAK271772','Kowalski','Ireneusz','M','19980210','Składowa 32/21','25-190','Chorzów','20200121');
+insert into klienci values ('KAR125362','Malinowski','Stanisław','M','19630719','Leśna 7','30-219','Zielonki','20200317');
+insert into klienci values ('RZK735524','Wiśniewska','Joanna','K','20000317','Długa 23/21','31-021','Kraków','20200317');
+
+set identity_insert ksiazki on
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (1,'Kronika sportu polskiego','2006','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (2,'Historia Wojska Polskiego',null,'hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (3,'Parki narodowe Polski','2012','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (4,'Cuda natury','2015','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (5,'Skarby natury w Polsce','2012','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (6,'Encyklopedia pytań i odpowiedzi','2016','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (7,'Cuda świata','2015','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (8,'Niezwykłe zjawiska','2018','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (9,'Władca Barcelony','2010','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (10,'Morze ognia','2011','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (11,'Uciekinierka z San Benito','2013','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (12,'Filary ziemi','1989','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (13,'Żmijowisko','2018','nowość');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (14,'Wejść między lwy','1991','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (15,'Skandal Modiglianiego','1995','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (16,'Zanim się pojawiłeś','2012','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (17,'Diamentowa karoca','2016','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (18,'Opracowania lektur i wierszy','2016','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (19,'Z polecenia prezydenta','2008','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (20,'Kuchnia polska','2017','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (21,'Kuchnia polska',null,'hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (22,'Ciasta i torty','2018','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (23,'Mistyfikacja','2010','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (25,'Szkarłatna wdowa','2015','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (26,'Tęsknię za tobą','2011','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (27,'Czas zapłaty','2013','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (28,'Weekend z Ostermanem','1972','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (29,'Wilki Fenrydera','2008','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (30,'Księżniczka z lodu',null,'hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (31,'Fabrykantka aniołów','2012','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (32,'Transakcja Rhinemanna','1974','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (33,'Wołanie kukułki','2013','bestseller');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (34,'Stany prymitywne','2006','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (35,'Zachowaj spokój','2008','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (36,'Kancelaria','2011','hit');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (37,'Nad Nilem Błękitnym i Białym','1985','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (38,'Tajemnice II Wojny Światowej',null,'standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (39,'Słownik historii Polski i świata','2008','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (40,'Słownik synonimów i antonimów','2010','standard');
+insert into ksiazki (IdKsiazki, TytulKsiazki, RokWydania, RodzajKsiazki) values (42,'Uciekinier','1995','standard');
+set identity_insert ksiazki off
+
+
+set identity_insert tworcy on
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (1,'Chruścicki','Bogdan',1945);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (2,'Olejnik','Karol',1938);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (3,'Włodarczyk','Joanna',1971);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (4,'Kwiatek','Bogdan',1978);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (5,'Gaweł','Łukasz',1965);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (6,'Doboszewska','Alina',1962);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (7,'Kosecka','Barbara',1953);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (8,'Pluta','Magdalena',1971);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (9,'Bilińska','Agnieszka',null);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (10,'Biliński','Włodek',1963);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (11,'Spadzińska-Żak','Elżbieta',1960);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (12,'Warcholik','Witold',1962);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (13,'Kuś','Maciej',1959);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (14,'Ponaratt','Renata',Null);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (15,'Jaśkiewicz','Marta',1971);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (16,'Llorens','Chufo',1931);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (17,'Cieplikowski','Maciej',1971);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (18,'Follett','Ken',1949);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (19,'Chmielarz','Wojciech',1984);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (20,'Moyes','Jojo',1969);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (21,'Akunin','Boris',1956);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (22,'Pietrzyk','Dariusz',1982);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (23,'Rychlicki','Robert',1983);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (24,'Marzec','Anna',1978);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (25,'Margolin','Phillip',1944);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (26,'Małecki','Paweł',1961);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (27,'Okrasa','Karol',1978);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (28,'Covin','Alec',1970);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (29,'Galbraith','Robert',1965);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (30,'Lackberg','Camilla',1974);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (31,'Ludlum','Robert',1927);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (32,'Grisham','John',1955);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (33,'Coben','Harlan',1962);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (34,'Masterton','Graham',1946);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (35,'Kwiatek','Bogdan',null);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (36,'Gajewska','Beata',1956);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (37,'Pawlus','Marta',1962);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (38,'Donabidowicz','Krystyna',null);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (39,'Kalarus','Maciej',null);
+insert into tworcy (IdTworcy, NazwiskoTworcy, ImieTworcy, RokUrodzenia) values (40,'Moorehead','Alan',1919);
+set identity_insert tworcy off
+
+insert into egzemplarze values (1),(1),(1),(1),(2),(22),(33),(2),(2),(3);
+insert into egzemplarze values (3),(3),(4),(4),(4),(5),(6),(5),(8),(7);
+insert into egzemplarze values (6),(8),(9),(10),(10),(10),(11),(12),(1),(12);
+insert into egzemplarze values (1),(12),(12),(12),(13),(13),(14),(14),(15),(15);
+insert into egzemplarze values (16),(16),(16),(17),(17),(17),(18),(18),(6),(18);
+insert into egzemplarze values (19),(20),(20),(21),(21),(21),(22),(22),(22),(23);
+insert into egzemplarze values (23),(23),(25),(25),(25),(26),(26),(27),(28),(28);
+insert into egzemplarze values (28),(28),(21),(29),(29),(30),(30),(30),(30),(31);
+insert into egzemplarze values (31),(31),(31),(32),(32),(32),(32),(33),(33),(33);
+insert into egzemplarze values (3),(3),(33),(33),(34),(34),(34),(34),(35),(35);
+insert into egzemplarze values (35),(35),(35),(36),(3),(37),(7),(38),(38),(38);
+insert into egzemplarze values (39),(39),(40),(38),(40),(42),(42),(17),(18),(42);
+insert into egzemplarze values (15),(21),(31);
+
+insert into wypozyczenia values (45,15,'20180321',14,'20180328'),(2,15,'20180321',3.5,'20180327'),(23,11,'20180322',7,'20180326'),(71,8,'20180323',3.5,'20180410'),(21,9,'20180325',7,'20180329');
+insert into wypozyczenia values (45,7,'20180325',14,'20180428'),(32,12,'20180326',7,'20180402'),(55,14,'20180329',7,'20180403'),(18,10,'20180402',3.5,'20180411'),(42,10,'20180402',7,'20180408');
+insert into wypozyczenia values (28,12,'20180402',7,'20180417'),(23,12,'20180402',7,'20180406'),(62,2,'20180407',14,'20180415'),(45,2,'20180407',14,'20180413'),(18,15,'20180411',3.5,'20180421');
+insert into wypozyczenia values (30,7,'20180415',7,'20180424'),(21,7,'20180415',7,'20180422'),(9,3,'20180422',7,'20180504'),(22,12,'20180423',14,'20180430'),(33,9,'20180427',7,'20180503');
+insert into wypozyczenia values (23,9,'20180427',7,'20180504'),(5,2,'20180511',7,'20180524'),(30,7,'20180512',7,null),(55,14,'20180517',7,'20180522'),(10,11,'20180602',3.5,'20180608');
+insert into wypozyczenia values (55,11,'20180602',7,'20180610'),(29,9,'20180609',7,'20180626'),(72,12,'20180612',3.5,'20180620'),(22,16,'20180612',14,'20180620'),(38,16,'20180612',3.5,'20180619');
+insert into wypozyczenia values (11,2,'20180723',3.5,'20180730'),(12,17,'20180729',3.5,'20180804'),(68,13,'20180808',7,'20180813'),(34,13,'20180808',7,'20180813'),(55,11,'20180906',7,'20180928');
+insert into wypozyczenia values (8,17,'20180908',7,'20180915'),(40,3,'20180912',3.50,'20180918'),(32,18,'20180917',7,'20180926'),(81,20,'20180919',17,'20180923'),(66,20,'20180919',17,'20181008');
+insert into wypozyczenia values (31,21,'20180923',3.5,'20180929'),(74,11,'20181002',7,'20181010'),(6,11,'20181002',3.5,'20181009'),(19,18,'20181007',14,'20181013'),(7,2,'20181012',17,'20181020');
+insert into wypozyczenia values (17,6,'20181022',7,'20181029'),(80,6,'20181022',14,'20181027'),(12,21,'20181107',3.5,'20181113'),(52,16,'20181112',3.5,'20181120'),(9,7,'20181117',7,'20181124');
+insert into wypozyczenia values (15,12,'20181117',7,'20181125'),(78,11,'20181123',7,'20181130'),(19,6,'20181125',14,'20181130'),(25,6,'20181125',7,'20181130'),(44,14,'20181207',14,'20181214');
+insert into wypozyczenia values (23,18,'20181211',7,'20181219'),(7,19,'20181217',14,'20181223'),(18,4,'20181220',3.5,'20181227'),(73,18,'20190104',7,'20190116'),(10,2,'20190107',3.5,'20190115');
+insert into wypozyczenia values (19,8,'20190111',14,'20190117'),(13,11,'20190117',7,'20190122'),(17,9,'20190118',7,'20190123'),(37,19,'20190121',3.5,'20190129'),(44,21,'20190122',14,'20190130');
+insert into wypozyczenia values (52,21,'20190122',3.5,'20190126'),(61,22,'20190123',14,'20190130'),(19,2,'20190129',14,'20190203'),(102,3,'20190202',14,null),(35,12,'20190207',10.5,'20190215');
+insert into wypozyczenia values (107,22,'20190211',17,null),(61,10,'20190212',14,'20190218'),(36,7,'20190217',10.5,'20190224'),(13,21,'20190218',7,'20190223'),(110,16,'20190222',3.5,'20190228');
+insert into wypozyczenia values (43,11,'20190223',7,'20190228'),(9,17,'20190226',7,'20190304'),(81,6,'20190303',14,'20190309'),(37,6,'20190303',3.5,'20190309'),(14,14,'20190307',7,'20190316');
+insert into wypozyczenia values (68,21,'20190311',7,'20190317'),(72,21,'20190311',3.5,'20190317'),(11,16,'20190318',3.5,'20190323'),(121,9,'20190319',3.5,'20190325'),(72,11,'20190323',3.5,'20190330');
+insert into wypozyczenia values (38,16,'20190327',3.5,'20190402'),(67,7,'20190330',14,'20190406'),(90,4,'20190407',14,'20190422'),(6,22,'20190411',3.5,'20190417'),(31,18,'20190411',3.5,'20190415');
+insert into wypozyczenia values (68,13,'20190417',7,'20190423'),(31,17,'20190418',3.5,null),(89,22,'20190422',14,'20190429'),(60,11,'20190428',14,'20190504'),(10,13,'20190429',3.5,'20190504');
+insert into wypozyczenia values (71,9,'20190507',3.5,'20190515'),(43,9,'20190507',7,'20190514'),(72,16,'20190511',3.5,'20190517'),(40,22,'20190517',3.5,'20190524'),(110,14,'20190522',3.5,'20190527');
+insert into wypozyczenia values (23,18,'20190527',7,'20190603'),(77,20,'20190607',7,null),(12,4,'20190611',3.5,'20190617'),(14,4,'20190611',7,'20190617'),(24,4,'20190611',7,'20190618');
+insert into wypozyczenia values (75,12,'20190617',7,'20190623'),(32,18,'20190623',7,'20190630'),(43,19,'20190624',7,'20190630'),(68,22,'20190627',7,'20190703'),(56,17,'20190702',7,'20190710');
+insert into wypozyczenia values (67,18,'20190705',14,'20190711'),(89,5,'20190711',14,null),(122,3,'20190712',7,'20190722'),(101,6,'20190717',3.5,'20190724'),(21,16,'20190718',7,'20190725');
+insert into wypozyczenia values (46,16,'20190718',14,'20190726'),(35,22,'20190723',10.5,'20190730'),(117,3,'20190729',3.5,'20190804'),(92,8,'20190804',3.5,'20190811'),(60,13,'20190807',14,'20190813');
+insert into wypozyczenia values (24,18,'20190811',7,'20190818'),(101,16,'20190812',3.5,'20190819'),(16,2,'20190819',3.5,'20190823'),(36,6,'20190822',10.5,'20190830'),(72,14,'20190829',3.5,'20190904');
+insert into wypozyczenia values (15,3,'20190902',7,'20190908'),(105,7,'20190911',3.5,'20190918'),(73,18,'20190912',7,'20190918'),(34,22,'20190915',7,'20190922'),(46,16,'20190917',14,'20190923');
+insert into wypozyczenia values (10,5,'20190922',3.5,'20190929'),(28,11,'20190929',7,'20191004'),(60,13,'20191007',14,'20191016'),(55,5,'20191011',7,'20191018'),(33,12,'20191018',7,'20191023');
+insert into wypozyczenia values (18,23,'20191019',3.5,'20191026'),(38,23,'20191019',3.5,'20191031'),(46,16,'20191023',14,'20191030'),(48,8,'20191028',3.5,'20191104'),(61,15,'20191103',14,'20191110');
+insert into wypozyczenia values (88,2,'20191107',14,'20191113'),(70,6,'20191115',3.5,'20191122'),(72,8,'20191116',3.5,null),(43,11,'20191117',7,'20191124'),(45,25,'20191122',14,'20191129');
+insert into wypozyczenia values (33,16,'20191126',7,'20191203'),(19,23,'20191129',14,'20191204'),(46,25,'20191207',14,null),(82,3,'20191211',14,'20191219'),(20,8,'20191212',14,'20191219');
+insert into wypozyczenia values (38,11,'20191217',3.5,'20191223'),(120,23,'20191218',3.5,'20191230'),(9,14,'20191222',7,'20191230'),(82,24,'20191226',14,'20200102'),(101,2,'20200103',3.5,'20200110');
+insert into wypozyczenia values (20,20,'20200107',14,'20200113'),(56,11,'20200109',7,'20200120'),(43,11,'20200109',7,'20200115'),(17,16,'20200112',7,'20200119'),(23,17,'20200114',7,'20200121');
+insert into wypozyczenia values (32,5,'20200116',7,'20200122'),(40,13,'20200118',3.5,'20200125'),(36,8,'20200118',10.5,'20200126'),(50,12,'20200122',3.5,'20200129'),(54,7,'20200124',7,'20200131');
+insert into wypozyczenia values (11,2,'20200130',3.5,null),(88,2,'20200130',14,'20200205'),(6,19,'20200203',3.5,'20200210'),(22,25,'20200207',14,'20200213'),(59,16,'20200211',3.5,'20200218');
+insert into wypozyczenia values (38,20,'20200212',3.5,null),(81,24,'20200214',14,'20200219'),(90,13,'20200216',14,'20200222'),(67,17,'20200222',14,'20200228'),(104,24,'20200222',7,'20200227');
+insert into wypozyczenia values (79,12,'20200224',7,'20200301'),(4,23,'20200228',3.5,null),(66,21,'20200229',14,'20200306'),(73,11,'20200303',7,'20200310'),(51,9,'20200307',7,'20200316');
+insert into wypozyczenia values (33,9,'20200307',7,'20200316'),(118,23,'20200311',14,'20200317'),(42,6,'20200312',7,'20200319'),(12,17,'20200313',3.5,'20200319'),(82,9,'20200314',14,'20200319');
+insert into wypozyczenia values (99,3,'20200316',3.5,null),(25,3,'20200316',7,null),(92,24,'20200317',3.5,null),(20,4,'20200317',14,null),(70,4,'20200317',3.5,null);
+insert into wypozyczenia values (98,16,'20200317',3.5,null);
+
+insert into doplaty values (4,5.5),(6,14),(9,1),(11,8),(13,2),(15,1.5),(16,2),(18,5),(22,6),(26,1),(27,10),(29,2),(35,15),(38,2),(40,24),(42,1),(45,2),(49,0.5),(51,1),(56,1);
+insert into doplaty values (59,5),(60,0.5),(64,0.5),(65,2),(70,1.5),(80,2),(88,16),(96,0.5),(110,1),(113,3),(116,2),(124,1.5),(133,4),(137,2.5),(149,2),(152,2.5),(153,1),(157,4),(163,1.5),(180,2),(181,2);
+
+insert into ksiazkiGatunki values (1,'historia'),(1,'sport'),(2,'beletrystyka'),(2,'historia'),(2,'nauka'),(3,'przyroda'),(4,'nauka'),(4,'przyroda'),(5,'geografia'),(5,'przyroda');
+insert into ksiazkiGatunki values (6,'nauka'),(7,'nauka'),(8,'nauka'),(9,'przygoda'),(10,'przygoda'),(11,'przygoda'),(12,'przygoda'),(13,'kryminał'),(13,'thriller'),(14,'przygoda');
+insert into ksiazkiGatunki values (15,'przygoda'),(16,'romans'),(17,'kryminał'),(18,'nauka'),(19,'kryminał'),(19,'thriller'),(20,'kulinaria'),(21,'kulinaria'),(22,'kulinaria'),(23,'kryminał');
+insert into ksiazkiGatunki values (23,'thriller'),(25,'kryminał'),(26,'kryminał'),(29,'thriller'),(31,'kryminał'),(31,'thriller'),(32,'thriller'),(33,'kryminał'),(34,'thriller'),(35,'thriller');
+insert into ksiazkiGatunki values (37,'geografia'),(37,'historia'),(38,'historia'),(39,'historia'),(42,'przygoda');
+
+insert into ksiazkiTworcy values (1,1,'redaktor'),(2,2,'autor'),(3,3,'redaktor'),(3,4,'autor'),(4,5,'redaktor'),(4,6,'redaktor'),(4,7,'redaktor'),(4,8,'redaktor'),(5,9,'autor'),(5,10,'autor');
+insert into ksiazkiTworcy values (5,11,'redaktor'),(7,5,'autor'),(7,12,'autor'),(7,13,'redaktor'),(8,14,'autor'),(8,15,'redaktor'),(9,16,'autor'),(10,16,'autor'),(10,17,'redaktor'),(11,16,'autor');
+insert into ksiazkiTworcy values (12,18,'autor'),(13,19,'autor'),(14,18,'autor'),(15,18,'autor'),(16,20,'autor'),(17,21,'autor'),(18,22,'autor'),(18,23,'autor'),(18,24,'autor'),(19,25,'autor');
+insert into ksiazkiTworcy values (20,26,'autor'),(21,27,'autor'),(22,26,'autor'),(23,33,'autor'),(25,34,'autor'),(26,33,'autor'),(27,32,'autor'),(28,31,'autor'),(29,28,'autor'),(30,30,'autor');
+insert into ksiazkiTworcy values (31,30,'autor'),(32,31,'autor'),(33,29,'autor'),(34,28,'autor'),(35,33,'autor'),(36,32,'autor'),(37,40,'autor'),(38,39,'autor'),(39,38,'redaktor'),(40,36,'autor');
+insert into ksiazkiTworcy values (40,37,'autor'),(42,18,'autor');
+
