@@ -12,6 +12,11 @@ from django.utils.dateformat import DateFormat
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 
 @login_required(login_url="/login/")
 def index(request):
@@ -141,7 +146,7 @@ def add_project(request,url):
 
 def get_chart_data(Model,months_before,aggregation):
     now = datetime.utcnow()
-    from_datetime = now - relativedelta(months=months_before)
+    from_datetime = now - relativedelta(months=months_before-1)
     modified_from_datetime = from_datetime.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     aggregated = Model.objects.filter(date_started__gte=modified_from_datetime).annotate(month=TruncMonth('date_started')).values('month').annotate(sum=aggregation)
 
@@ -160,16 +165,31 @@ def get_chart_data(Model,months_before,aggregation):
 
     return (list(data.keys()),list(data.values()))
 
+def project_pdf(request,pk):
+    # Create a file-like buffer to receive PDF data.
+    buffer = io.BytesIO()
+    # Create the PDF object, using the buffer as its "file."
+    doc = SimpleDocTemplate(buffer)
+    flowables = []
+    style = getSampleStyleSheet()
+    paragraph_1 = Paragraph("A title", style['Heading1'])
+    paragraph_2 = Paragraph(
+    "Some normal body text",
+    style['BodyText']
+    )
+    flowables.append(paragraph_1)
+    flowables.append(paragraph_2)
+    doc.build(flowables)
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    buffer = buffer.getvalue()
 
-# def project_remove_index(request, pk):
-#     if request.method =="POST":
-#         project = Project.objects.filter(pk=pk)
-#         project.delete()
-#     return redirect('home')
 
-# @login_required()
-# def project_remove_profile(request, pk):
-#     if request.method =="POST":
-#         project = Project.objects.filter(pk=pk)
-#         project.delete()
-#     return redirect('profile')
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="some_file.pdf"'
+    
+    response.write(buffer)
+    return response
+    # return FileResponse(buffer, as_attachment=True, filename='hello.pdf')

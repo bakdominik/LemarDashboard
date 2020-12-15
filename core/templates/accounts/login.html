@@ -3,7 +3,13 @@
 {% block title %} Login {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style type='text/css'>
+input {
+  padding: 10px!important;
+}
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
 
@@ -13,11 +19,11 @@
         <div class="col-lg-5 col-md-7">
           <div class="card bg-secondary shadow border-0">
             <div class="card-header bg-transparent pb-5">
-              <div class="text-muted text-center mt-2 mb-3">
+              <div class="text-muted text-center mt-2 mb-1">
                 Zaloguj się
               </div>
             </div>
-            <div class="card-body px-lg-5 py-lg-5">
+            <div class="card-body px-lg-5 py-lg-3">
               <div class="text-center text-muted mb-4">
 
                 {% if msg %}

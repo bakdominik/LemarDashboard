@@ -9,21 +9,24 @@
 .no-sort {
 width: 10px
 }
+#example tbody tr:hover {
+       background-color: white;
+       cursor: pointer;
+   }
 </style>
 {% endblock %}
 {% block content %}
 
     <!-- Header -->
-    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" 
-         style="min-height: 500px; background-image: url(/static/assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8" 
+         style="">
       <!-- Mask -->
-      <span class="mask bg-gradient-default opacity-8"></span>
       <!-- Header container -->
       <div class="container-fluid d-flex align-items-center">
         <div class="row">
           <div class="col-lg-7 col-md-10">
             <h1 class="display-2 text-white">Witaj {{ request.user.username }}</h1>
-            <p class="text-white mt-0 mb-5">To jest strona twojego profilu. Możesz tutaj zobaczyć postępy w pracy i zarządzać projektami lub przydzielonymi zadaniami</p>
+            <p class="text-white">To jest strona twojego profilu. Możesz tutaj zobaczyć postępy w pracy i zarządzać projektami lub przydzielonymi zadaniami</p>
           </div>
         </div>
       </div>
@@ -116,7 +119,6 @@ width: 10px
                                 <th tabindex='3'>Status</th>
                                 <th tabindex='4'>Data rozpoczęcia</th>
                                 <th tabindex='5' >Kwota</th>
-                                <th tabindex='6' class='no-sort'>Usuń</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -129,11 +131,6 @@ width: 10px
                                 <td>{{ project.get_status_display }}</td>
                                 <td>{{ project.date_started|date:"j E Y" }}</td>
                                 <td>{{ project.value }} zł</td>
-                                <td>
-                                    <a id="delete_button" value="{{project.pk}}" class="delete_button no-sort nav-link">
-                                      <i class="ni ni-fat-remove text-red"></i>
-                                    </a>
-                                </td>
                             </tr>
                             
                             

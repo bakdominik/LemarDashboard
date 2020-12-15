@@ -59,11 +59,7 @@
                 {% for message in messages %}
     <p class="{{ message.tags }}">{{ message }}</p>
     {% endfor %}
-                    {% comment %} {% for field in form.fields  %}
-                    {% for error in field.errors %}
-                    {{error}}
-                    {% endfor %}
-                    {% endfor %} {% endcomment %}
+
                     <form method="post">
                       {% csrf_token %}
                       {{ form|crispy }}

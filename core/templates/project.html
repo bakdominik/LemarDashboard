@@ -20,7 +20,7 @@ width: 10px
       <div class="container-fluid d-flex align-items-center">
         <div class="row">
           <div class="col-12 mt-5">
-            <h2 class="display-3 text-white">Szczegóły projektu TEST123456</h2>
+            <h2 class="display-3 text-white">Szczegóły projektu</h2>
 
           </div>
         </div>
@@ -31,7 +31,7 @@ width: 10px
         <div class="card py-4 mb-5 shadow">
         <div class="card-body">
         <div class="row">
-                    <div class="col-xl-8 px-5">
+                    <div class="col-xl-8 px-md-5 ">
                         <form id='project-update-form' method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                         <div class="row my-2">
@@ -77,7 +77,7 @@ width: 10px
 
                     </form>
                     </div>
-                    <div class="col-xl-4 px-5">
+                    <div class="col-xl-4 px-md-5 ">
                         <div class="row">
                             <div class="col-12">
                                 <h2 class='mb-3'>Checklista</h2>
@@ -97,6 +97,10 @@ width: 10px
                                 <div class="row px-3">
                                     <input {% if project.checklist.mapa %}checked{% endif %} class='checklist-radio' name='mapa' style='margin-top: 6px' class='text-center' type="radio" aria-label="">
                                     <p class='mx-3'>{% if project.checklist.mapa %}<del>Mapa do celów projektowych</del>{% else %}Mapa do celów projektowych{% endif %}</p>
+                                </div>
+                                <div class="row px-3">
+                                    <input {% if project.checklist.uzyskanie_zgod %}checked{% endif %} class='checklist-radio' name='zup' style='margin-top: 6px' type="radio" aria-label="">
+                                    <p class=' mx-3'>{% if project.checklist.uzyskanie_zgod %}<del>Zgody</del>{% else %}Zgody{% endif %}</p>
                                 </div>
                                 <div class="row px-3">
                                     <input {% if project.checklist.zup %}checked{% endif %} class='checklist-radio' name='zup' style='margin-top: 6px' type="radio" aria-label="">
@@ -128,7 +132,7 @@ width: 10px
         <div class="card bg-gradient-default shadow py-4 mb-5 shadow">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-xl-6 px-5">
+                    <div class="col-xl-6 px-md-5 ">
                         <div class='row pb-5'>
                             <div class='col-6'>
                                 <h2 class='text-white'>Załączniki</h2>
@@ -176,7 +180,7 @@ width: 10px
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-6 px-5">
+                    <div class="col-xl-6 px-md-5 ">
                         <div class='row pb-5'>
                             <div class='col-6'>
                                 <h2 class='text-white'>Rachunki</h2>
@@ -215,9 +219,9 @@ width: 10px
                                 <button type="button" data-target="#invoice-modal" data-toggle="modal" class="float-right btn btn-sm btn-primary">Dodaj nowy</button>
                             </div>
                         </div>
-                        <div class='' style='overflow: auto;height:300px;overflow-x:hidden;'>
-                        <div class='row'>
-                            <table id="rachunki" class="table table-bordered">
+                        <div class='' style='overflow: auto;height:300px;overflow-x:hidden'>
+                        <div class='row px-1'>
+                            <table style="table-layout:fixed;width:100%" id="rachunki" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th class='text-white'tabindex='0'>Tytuł rachunku</th>
@@ -228,11 +232,11 @@ width: 10px
                                     {% for invoice in invoices %}
 
                                     <tr id="{{ invoice.pk }}">
-                                        <td><a  href="{{invoice.invoice.url }}" download ><h4 class='mt-3 text-white'>{{ invoice.title}}</h4></a></td>
-                                        <td>
+                                        <td style="width:50%"><a  href="{{invoice.invoice.url }}" download ><h4 style='white-space: pre-line;'class='mt-md-3 text-white'>{{ invoice.title}}</h4></a></td>
+                                        <td style="width:50%">
 
                                             <select style='background-color: transparent;
-                                                color: white;' required name="status" id="{{invoice.pk}}" class="status-form form-control">
+                                                color: white;' required name="status" id="{{invoice.pk}}" class="my-auto status-form form-control">
                                             <option style='background-color: #19214D;
                                             color: white;' selected>{{invoice.status}}</option>
                                             <option style='background-color: #19214D;

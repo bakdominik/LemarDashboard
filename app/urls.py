@@ -23,5 +23,6 @@ urlpatterns = [
     path('update_invoice_status/<int:pk>/',views.update_invoice_status, name='update_invoice_status'),
     path('', views.index, name='home'),
     path('settings/',views.settings, name='settings'),
+    path('project_pdf/<int:pk>',views.project_pdf,name='project_pdf')
 
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

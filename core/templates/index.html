@@ -8,9 +8,6 @@
 #example_filter {
   margin-top: 50px!important;
 }
-.no-sort {
-width: 10px
-}
 
 #example tbody tr:hover {
        background-color: white;
@@ -145,7 +142,7 @@ width: 10px
         </div>
       </div>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid mb-5">
       <div class="row mt-5">
         <div class="col">
           <div class="card bg-secondary shadow">
@@ -173,11 +170,11 @@ width: 10px
                             </div>
                             <div class="form-group">
                                 <label for="title">Nr zlecenia</label>
-                                <input required type="text" class="form-control" name="title" id="title" placeholder="Nr zlecenia">
+                                <input autocomplete="off" required type="text" class="form-control" name="title" id="title" placeholder="Nr zlecenia">
                             </div>
                             <div class="form-group">
-                                <label for="localization">Lokalizacja</label>
-                                <input required type="text" class="form-control" id="localization" 
+                                <label  for="localization">Lokalizacja</label>
+                                <input autocomplete="off" required type="text" class="form-control" id="localization" 
                                 name="localization" placeholder="Lokalizacja">
                             </div>
                             <div class="form-group">
@@ -192,13 +189,16 @@ width: 10px
                                 <div class="col col-6">
                                 <div class="form-group">
                                     <label for="date">Data rozpoczęcia</label>
-                                    <input  required name="datepicker"id='datepicker' class='datepicker form-control'>
+                                    <input
+                                    autocomplete="off"  required name="datepicker"id='datepicker' class='datepicker form-control'>
                                 </div>
                                 </div>
                                 <div class="col col-6">
                                 <div class="form-group">
                                     <label for="value">Kwota</label>
-                                    <input required placeholder='0' type='number' name="value"id='value' class='form-control'>
+                                    <input 
+                                    autocomplete="off"
+                                    required placeholder='0' type='number' name="value"id='value' class='form-control'>
                                 </div>
                                 </div>
                             </div>

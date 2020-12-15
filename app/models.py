@@ -40,6 +40,7 @@ class Checklist(models.Model):
     wypis_i_wyrys = models.BooleanField(default=False)
     mapa = models.BooleanField(default=False)
     zup = models.BooleanField(default=False)
+    uzyskanie_zgod = models.BooleanField(default=False)
     project = models.OneToOneField(Project, primary_key=True, on_delete=models.CASCADE)
 
 class ProjectFile(models.Model):

@@ -12,6 +12,8 @@
 ></script>
 
 <!-- DataTables -->
+<style src='https://cdn.datatables.net/responsive/2.2.6/css/dataTables.responsive.css'> </style>
+<script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.js"></script>
 <script src="/static/assets/plugins/bootstrap-datatable/js/jquery.dataTables.min.js"></script>
 <script src="/static/assets/plugins/bootstrap-datatable/js/dataTables.bootstrap4.min.js"></script>
 <script src="/static/assets/plugins/bootstrap-datatable/js/dataTables.buttons.min.js"></script>
@@ -122,6 +124,7 @@
     //Default data table
 
     var table = $("#example").DataTable({
+      responsive: true,
       info: false,
       select: true,
       lengthChange: false,
