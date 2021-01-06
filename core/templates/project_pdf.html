@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+{% load static %}
+{% load extra_templatetags %}
+<html lang="pl">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <title>{{project.title}}</title>
+
+      <style type="text/css">
+          del {
+            color:darkgreen;
+          }
+          body {
+              font-weight: 200;
+              font-size: 14px;
+          }
+          .column {
+            float: left;
+            width: 50%;
+          }
+
+          /* Clear floats after the columns */
+          .row:after {
+            content: "";
+            display: table;
+            clear: both;
+}
+      </style>
+
+  </head>
+  <body>
+    <h1>{{ project.title }}</h1>
+    <br>
+    <div class="row">
+      <div class="column"><table>
+      <tr>
+        <td>Osoba odpowiedzialna</td>
+        <td>{{project.user.username}} {{project.user.last_name}}</td>
+      </tr>
+      <tr>
+        <td>Lokalizacja</td>
+        <td>{{project.localization}}</td>
+      </tr>
+      <tr>
+        <td>Status projektu</td>
+        <td>{{project.status}}</td>
+      </tr>
+      <tr>
+        <td>Data rozpoczęcia</td>
+        <td>{{project.date_started}}</td>
+      </tr>
+      <tr>
+        <td>Wartość projektu</td>
+        <td>{{project.value}} zł</td>
+      </tr>
+    </table></div>
+    <br>
+    <table>
+      <tr>
+        <td style='vertical-align:top'>
+          <h2 class='mb-3'>Checklista</h2>
+          {% for name, value in checklist.items %}
+          <div>
+            {{name}}
+            <!-- <p class=' mx-3'>{% if value %}<del>{{name|capfirst|replace:'_'}}{% else %}{{name|capfirst|replace:'_'}}{% endif %}</p> -->
+          </div> 
+          {% endfor %}
+        </td>
+        <td style='vertical-align:top'>
+          <h2>Komentarze</h2>
+          {% for comment in project.comments.all %}
+          <small>{{ comment.user.username }} {{ comment.user.last_name }}  | {{ comment.posted }}</small>
+          <p style='padding-top:0;margin-top:0px'>{{ comment.content}}</p>
+          {% endfor %}
+        </td>
+      </tr>
+    </table>
+    
+
+
+    <div class="row p-3 mt-5">
+        <h2 class='mb-3'>Inwestor</h2>
+        <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="investor" cols="25" rows="3">{{project.investor}}</textarea>
+    </div>
+
+    <div class="row p-3 mt-5">
+        <h2 class='mb-3'>Obiekt</h2>
+        <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="project_object" cols="25" rows="10">{{project.project_object}}</textarea>
+    </div></div>
+    </div>
+    
+    
+
+    <h2 class='text-white'>Lista Załączników</h2>
+    <ul>
+      {% for project_file in files  %} 
+        <li>{{ project_file.title}}</li>
+      {% endfor %}
+
+    </ul>
+
+    <h2 class='text-white'>Lista Rachunków</h2>
+    <ul>
+    <table>
+      {% for invoice in invoices  %} 
+        <tr>
+          <td><li>{{ invoice.title}}</li></td>
+          <td>{{invoice.status}}</td> 
+        </tr>      
+      {% endfor %}
+    </table>
+    </ul> 
+      
+  </tbody>
+  </table>
+  </body>
+</html>

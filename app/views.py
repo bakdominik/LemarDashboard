@@ -12,11 +12,12 @@ from django.utils.dateformat import DateFormat
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
-import io
 from django.http import FileResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.forms.models import model_to_dict
+
 
 @login_required(login_url="/login/")
 def index(request):
@@ -48,10 +49,12 @@ def profile(request):
 @login_required(login_url="/login/")
 def project(request,pk):
     project = Project.objects.get(pk=pk)
+    checklist = model_to_dict(project.checklist)
+    del checklist['project']
     files = ProjectFile.objects.filter(project=pk)
     invoices = ProjectInvoice.objects.filter(project=pk)
     html_template = loader.get_template( 'project.html' )
-    return HttpResponse(html_template.render({"project":project,"files":files,"invoices":invoices}, request))
+    return HttpResponse(html_template.render({"project":project,"files":files,"invoices":invoices,"checklist":checklist}, request))
 
 
 
@@ -127,8 +130,6 @@ def settings(request):
     html_template = loader.get_template( 'settings.html' )
     return HttpResponse(html_template.render({'user_active':user_active,'user_finished':user_finished,'form':form},request))
 
-# utils
-
 def add_project(request,url):
     project = Project()
     project.user = request.user
@@ -143,6 +144,30 @@ def add_project(request,url):
     checklist.save()
     return redirect(url)
 
+def project_pdf(request,pk):
+    project = Project.objects.get(pk=pk)
+    checklist = model_to_dict(project.checklist)
+    del checklist['project']
+    context = {
+        "project": project,
+        "checklist": checklist,
+        "files": ProjectFile.objects.filter(project=project),
+        "invoices": ProjectInvoice.objects.filter(project=project)
+    }
+    pdf = render_to_pdf('project_pdf.html', context)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = project.title + ".pdf"
+        content = f"inline; filename={filename}"
+        download = request.GET.get("download")
+        if download:
+            content = "attachment; filename='%s'" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    return HttpResponse("Not found") 
+
+
+# utils
 
 def get_chart_data(Model,months_before,aggregation):
     now = datetime.utcnow()
@@ -163,33 +188,14 @@ def get_chart_data(Model,months_before,aggregation):
     for project in aggregated:
         data[monthsShort[f'{project["month"].month}']]=project['sum']
 
-    return (list(data.keys()),list(data.values()))
+    return (list(data.keys()),list(data.values()))   
 
-def project_pdf(request,pk):
-    # Create a file-like buffer to receive PDF data.
-    buffer = io.BytesIO()
-    # Create the PDF object, using the buffer as its "file."
-    doc = SimpleDocTemplate(buffer)
-    flowables = []
-    style = getSampleStyleSheet()
-    paragraph_1 = Paragraph("A title", style['Heading1'])
-    paragraph_2 = Paragraph(
-    "Some normal body text",
-    style['BodyText']
-    )
-    flowables.append(paragraph_1)
-    flowables.append(paragraph_2)
-    doc.build(flowables)
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    buffer = buffer.getvalue()
-
-
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="some_file.pdf"'
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode()), result, encoding='UTF-8')
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
     
-    response.write(buffer)
-    return response
-    # return FileResponse(buffer, as_attachment=True, filename='hello.pdf')

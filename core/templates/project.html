@@ -1,6 +1,7 @@
 
 {% extends 'layouts/base.html' %}
 {% load static %}
+{% load extra_templatetags %}
 {% block title %} Profil {% endblock title %}
 {% block stylesheets %}
 <style type='text/css'>
@@ -18,15 +19,21 @@ width: 10px
     <div class="header bg-gradient-primary pb-8 pt-5 pt-lg-8 d-flex align-items-center" >
       <!-- Header container -->
       <div class="container-fluid d-flex align-items-center">
-        <div class="row">
-          <div class="col-12 mt-5">
+        <div style='flex:1'class="row">
+          <div class="col-10 mt-5">
             <h2 class="display-3 text-white">Szczegóły projektu</h2>
+          </div>
+          <div class="col-2 mt-5">
+            <form target="_blank" action="{% url 'project_pdf' pk=project.pk %}">
+                {% csrf_token %}
+                <button class='float-right btn btn-lg btn-secondary'>Pobierz PDF</button>
+            </form>
 
           </div>
         </div>
       </div>
     </div>
-
+    <div id="screen">
     <div class="container-fluid mt--7">
         <div class="card py-4 mb-5 shadow">
         <div class="card-body">
@@ -75,47 +82,35 @@ width: 10px
                             <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="project_object" cols="25" rows="10">{{project.project_object}}</textarea>
                         </div>
 
+                        <div class="col-12">
+                                        {% load comment_tags %}
+                                        {% render_comments project request %}
+                                </div>
+
                     </form>
                     </div>
                     <div class="col-xl-4 px-md-5 ">
                         <div class="row">
                             <div class="col-12">
                                 <h2 class='mb-3'>Checklista</h2>
-                                <form name='checklist'>
+                                {% for name, value in checklist.items %}
                                 <div class="row px-3">
-                                    <input class='checklist-radio' style='margin-top: 6px' type="radio" {% if project.checklist.zlecenie_z_gazowni %}checked{% endif %} name='zlecenie_z_gazowni' aria-label="">
-                                    <p class='mx-3'>{% if project.checklist.zlecenie_z_gazowni %}<del>Zlecenie z gazowni</del>{% else %}Zlecenie z gazowni{% endif %}</p>
-                                </div>
-                                <div class="row px-3">
-                                    <input class='checklist-radio' name='warunki_techniczne' style='margin-top: 6px' type="radio" {% if project.checklist.warunki_techniczne %}checked{% endif %} aria-label="">
-                                    <p class='mx-3'>{% if project.checklist.warunki_techniczne %}<del>Warunki techniczne</del>{% else %}Warunki techniczne{% endif %}</p>
-                                </div>
-                                <div class="row px-3">
-                                    <input {% if project.checklist.wypis_i_wyrys %}checked{% endif %} class='checklist-radio' name='wypis_i_wyrys' style='margin-top: 6px' type="radio" aria-label="">
-                                    <p class='mx-3'>{% if project.checklist.wypis_i_wyrys %}<del>Wypis i wyrys</del>{% else %}Wypis i wyrys{% endif %}</p>
-                                </div>
-                                <div class="row px-3">
-                                    <input {% if project.checklist.mapa %}checked{% endif %} class='checklist-radio' name='mapa' style='margin-top: 6px' class='text-center' type="radio" aria-label="">
-                                    <p class='mx-3'>{% if project.checklist.mapa %}<del>Mapa do celów projektowych</del>{% else %}Mapa do celów projektowych{% endif %}</p>
-                                </div>
-                                <div class="row px-3">
-                                    <input {% if project.checklist.uzyskanie_zgod %}checked{% endif %} class='checklist-radio' name='zup' style='margin-top: 6px' type="radio" aria-label="">
-                                    <p class=' mx-3'>{% if project.checklist.uzyskanie_zgod %}<del>Zgody</del>{% else %}Zgody{% endif %}</p>
-                                </div>
-                                <div class="row px-3">
-                                    <input {% if project.checklist.zup %}checked{% endif %} class='checklist-radio' name='zup' style='margin-top: 6px' type="radio" aria-label="">
-                                    <p class=' mx-3'>{% if project.checklist.zup %}<del>ZUP</del>{% else %}ZUP{% endif %}</p>
-                                </div>
+                                    <div class='col-1'>
+                                    <input {% if value %}checked{% endif %} class='checklist-radio' name={{ name }} style='margin-top: 6px' type="radio" aria-label="">
+                                    </div>
+                                    <div class='col-11'>
+                                        <p class=' mx-3'>{% if value %}<del>{{name|capfirst|replace:'_'}}{% else %}{{name|capfirst|replace:'_'}}{% endif %}</p>
+                                    </div>
+
+                                </div> 
+                                {% endfor %}
                             </form>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-12">
-                                        {% load comment_tags %}
-                                        {% render_comments project request %}
-                                </div>
+                                    
                             </div>
                         </div>
 
@@ -256,6 +251,7 @@ width: 10px
             </div>
         </div>
     </div>
+    </div>
 
       {% include "includes/footer.html" %}
 
@@ -265,13 +261,16 @@ width: 10px
 
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
+
 <script>
+
 {% comment %} AJAX checlist {% endcomment %}
 
 var elements = document.getElementsByClassName("checklist-radio");
 for (var i = 0; i < elements.length; i++) {
     elements[i].addEventListener('change', function() {
-        this.nextElementSibling.innerHTML="<del>"+this.nextElementSibling.innerHTML+"</del>"
+        this.parentNode.nextElementSibling.innerHTML="<del>"+this.parentNode.nextElementSibling.innerHTML+"</del>"
+        
         let object_id = $(this).attr("value");
         let url = '/check/{{ project.pk }}/';
         $.ajax({

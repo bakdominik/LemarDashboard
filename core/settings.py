@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'crispy_forms'  # Enable the inner app 
+    'crispy_forms',  # Enable the inner app 
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
