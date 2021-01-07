@@ -1,6 +1,108 @@
 'use strict';
 
-var CopyIcon = (function() {
+// Date picker
+$.fn.datepicker.dates["pl"] = {
+  days: [
+    "Niedziela",
+    "Poniedziałek",
+    "Wtorek",
+    "Środa",
+    "Czwartek",
+    "Piątek",
+    "Sobota",
+  ],
+  daysShort: ["Nie", "Pn", "Wt", "Śr", "Czw", "Pt", "So"],
+  daysMin: ["N", "Pn", "Wt", "Śr", "Cz", "Pt", "So"],
+  months: [
+    "Styczeń",
+    "Luty",
+    "Marzec",
+    "Kwiecień",
+    "Maj",
+    "Czerwiec",
+    "Lipiec",
+    "Sierpień",
+    "Wrzesień",
+    "Październik",
+    "Listopad",
+    "Grudzień",
+  ],
+  monthsShort: [
+    "Sty",
+    "Lu",
+    "Mar",
+    "Kw",
+    "Maj",
+    "Cze",
+    "Lip",
+    "Sie",
+    "Wrz",
+    "Pa",
+    "Lis",
+    "Gru",
+  ],
+  today: "Dzisiaj",
+  clear: "wyczyść",
+  format: "yyyy-mm-dd",
+  titleFormat: "MM yyyy" /* Leverages same syntax as 'format' */,
+  weekStart: 1,
+};
+$("#datepicker").datepicker({
+  language: "pl",
+  todayHighlight: true,
+  autoclose: true,
+});
+
+//Default data table
+$(document).ready(function () {
+
+
+  var table = $("#example").DataTable({
+    responsive: true,
+    info: false,
+    select: true,
+    lengthChange: false,
+    language: {
+      paginate: {
+        next: ">",
+        previous: "<",
+      },
+      emptyTable: "Brak danych",
+      search: "Wyszukaj",
+    },
+    buttons: [
+      "excel",
+      "pdf",
+      { extend: "print", text: "Drukuj" },
+      { extend: "colvis", text: "Ukryj kolumny" },
+    ],
+  });
+
+  table.buttons().container().appendTo("#example_wrapper .col-md-6:eq(0)");
+});
+
+$("#example").on("click", "tbody tr", function () {
+  //get textContent of the TD
+  location.href = "/project/" + this.id;
+});
+
+// menu toggle
+function toggleMenu() {
+  var x = document.getElementById("sidenav-main");
+  if (x.style.marginLeft === '-250px') {
+    x.style.marginLeft = '0px';
+    document.getElementsByClassName('main-content')[0].style.marginLeft = '250px';
+    document.getElementById('main-toggler').classList.remove('ni-bold-right')
+    document.getElementById('main-toggler').classList.add('ni-bold-left')
+  } else {
+    x.style.marginLeft = '-250px';
+    document.getElementsByClassName('main-content')[0].style.marginLeft = '0px';
+    document.getElementById('main-toggler').classList.remove('ni-bold-left')
+    document.getElementById('main-toggler').classList.add('ni-bold-right')
+  }
+};
+
+var CopyIcon = (function () {
 
   // Variables
 
@@ -11,7 +113,7 @@ var CopyIcon = (function() {
   // Methods
 
   function init($this) {
-    $this.tooltip().on('mouseleave', function() {
+    $this.tooltip().on('mouseleave', function () {
       // Explicitly hide tooltip, since after clicking it remains
       // focused (as it's a button), so tooltip would otherwise
       // remain visible until focus is moved away
@@ -20,7 +122,7 @@ var CopyIcon = (function() {
 
     var clipboard = new ClipboardJS($element);
 
-    clipboard.on('success', function(e) {
+    clipboard.on('success', function (e) {
       $(e.trigger)
         .attr('title', 'Copied!')
         .tooltip('_fixTitle')
@@ -46,7 +148,7 @@ var CopyIcon = (function() {
 
 'use strict';
 
-var FormControl = (function() {
+var FormControl = (function () {
 
   // Variables
 
@@ -56,7 +158,7 @@ var FormControl = (function() {
   // Methods
 
   function init($this) {
-    $this.on('focus blur', function(e) {
+    $this.on('focus blur', function (e) {
       $(this).parents('.form-group').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
     }).trigger('blur');
   }
@@ -73,7 +175,7 @@ var FormControl = (function() {
 
 'use strict';
 
-var Navbar = (function() {
+var Navbar = (function () {
 
   // Variables
 
@@ -92,7 +194,7 @@ var Navbar = (function() {
 
     $dropdownMenu.addClass('close');
 
-    setTimeout(function() {
+    setTimeout(function () {
       $dropdownMenu.removeClass('close');
     }, 200);
   }
@@ -101,13 +203,13 @@ var Navbar = (function() {
   // Events
 
   $collapse.on({
-    'show.bs.collapse': function() {
+    'show.bs.collapse': function () {
       accordion($(this));
     }
   })
 
   $dropdown.on({
-    'hide.bs.dropdown': function() {
+    'hide.bs.dropdown': function () {
       closeDropdown($(this));
     }
   })
@@ -120,7 +222,7 @@ var Navbar = (function() {
 //
 
 
-var NavbarCollapse = (function() {
+var NavbarCollapse = (function () {
 
   // Variables
 
@@ -143,13 +245,13 @@ var NavbarCollapse = (function() {
 
   if ($collapse.length) {
     $collapse.on({
-      'hide.bs.collapse': function() {
+      'hide.bs.collapse': function () {
         hideNavbarCollapse($collapse);
       }
     })
 
     $collapse.on({
-      'hidden.bs.collapse': function() {
+      'hidden.bs.collapse': function () {
         hiddenNavbarCollapse($collapse);
       }
     })
@@ -159,7 +261,7 @@ var NavbarCollapse = (function() {
 
 
 
-var Popover = (function() {
+var Popover = (function () {
 
   // Variables
 
@@ -186,7 +288,7 @@ var Popover = (function() {
   // Events
 
   if ($popover.length) {
-    $popover.each(function() {
+    $popover.each(function () {
       init($(this));
     });
   }
@@ -199,7 +301,7 @@ var Popover = (function() {
 
 'use strict';
 
-var ScrollTo = (function() {
+var ScrollTo = (function () {
 
   //
   // Variables
@@ -231,7 +333,7 @@ var ScrollTo = (function() {
   //
 
   if ($scrollTo.length) {
-    $scrollTo.on('click', function(event) {
+    $scrollTo.on('click', function (event) {
       scrollTo($(this));
     });
   }
@@ -244,7 +346,7 @@ var ScrollTo = (function() {
 
 'use strict';
 
-var Tooltip = (function() {
+var Tooltip = (function () {
 
   // Variables
 
@@ -272,7 +374,7 @@ var Tooltip = (function() {
 
 'use strict';
 
-var Charts = (function() {
+var Charts = (function () {
 
   // Variable
 
@@ -361,7 +463,7 @@ var Charts = (function() {
             enabled: false,
             mode: 'index',
             intersect: false,
-            custom: function(model) {
+            custom: function (model) {
 
               // Get tooltip
               var $tooltip = $('#chart-tooltip');
@@ -394,12 +496,12 @@ var Charts = (function() {
                 html += '<div class="arrow"></div>';
 
                 // Add header
-                titleLines.forEach(function(title) {
+                titleLines.forEach(function (title) {
                   html += '<h3 class="popover-header text-center">' + title + '</h3>';
                 });
 
                 // Add body
-                bodyLines.forEach(function(body, i) {
+                bodyLines.forEach(function (body, i) {
                   var colors = model.labelColors[i];
                   var styles = 'background-color: ' + colors.backgroundColor;
                   var indicator = '<span class="badge badge-dot"><i class="bg-primary"></i></span>';
@@ -435,7 +537,7 @@ var Charts = (function() {
 
             },
             callbacks: {
-              label: function(item, data) {
+              label: function (item, data) {
                 var label = data.datasets[item.datasetIndex].label || '';
                 var yLabel = item.yLabel;
                 var content = '';
@@ -454,11 +556,11 @@ var Charts = (function() {
           cutoutPercentage: 83,
           tooltips: {
             callbacks: {
-              title: function(item, data) {
+              title: function (item, data) {
                 var title = data.labels[item[0].index];
                 return title;
               },
-              label: function(item, data) {
+              label: function (item, data) {
                 var value = data.datasets[0].data[item.index];
                 var content = '';
 
@@ -467,11 +569,11 @@ var Charts = (function() {
               }
             }
           },
-          legendCallback: function(chart) {
+          legendCallback: function (chart) {
             var data = chart.data;
             var content = '';
 
-            data.labels.forEach(function(label, index) {
+            data.labels.forEach(function (label, index) {
               var bgColor = data.datasets[0].backgroundColor[index];
 
               content += '<span class="chart-legend-item">';
@@ -503,7 +605,7 @@ var Charts = (function() {
       ticks: {
         beginAtZero: true,
         padding: 10,
-        callback: function(value) {
+        callback: function (value) {
           if (!(value % 10)) {
             return value
           }
@@ -543,7 +645,7 @@ var Charts = (function() {
   function pushOptions(parent, options) {
     for (var item in options) {
       if (Array.isArray(options[item])) {
-        options[item].forEach(function(data) {
+        options[item].forEach(function (data) {
           parent[item].push(data);
         });
       } else {
@@ -556,7 +658,7 @@ var Charts = (function() {
   function popOptions(parent, options) {
     for (var item in options) {
       if (Array.isArray(options[item])) {
-        options[item].forEach(function(data) {
+        options[item].forEach(function (data) {
           parent[item].pop();
         });
       } else {
@@ -612,14 +714,14 @@ var Charts = (function() {
       var suffix = elem.data('suffix') ? elem.data('suffix') : '';
 
       // Update ticks
-      $chart.options.scales.yAxes[0].ticks.callback = function(value) {
+      $chart.options.scales.yAxes[0].ticks.callback = function (value) {
         if (!(value % 10)) {
           return prefix + value + suffix;
         }
       }
 
       // Update tooltips
-      $chart.options.tooltips.callbacks.label = function(item, data) {
+      $chart.options.tooltips.callbacks.label = function (item, data) {
         var label = data.datasets[item.datasetIndex].label || '';
         var yLabel = item.yLabel;
         var content = '';
@@ -645,14 +747,14 @@ var Charts = (function() {
 
   // Toggle options
   $toggle.on({
-    'change': function() {
+    'change': function () {
       var $this = $(this);
 
       if ($this.is('[data-add]')) {
         toggleOptions($this);
       }
     },
-    'click': function() {
+    'click': function () {
       var $this = $(this);
 
       if ($this.is('[data-update]')) {

@@ -1,6 +1,7 @@
 <nav
   class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white"
   id="sidenav-main"
+  style='transition:0.5s;'
 >
   <div class="container-fluid">
     <!-- Toggler -->
@@ -12,9 +13,8 @@
       aria-controls="sidenav-main"
       aria-expanded="false"
       aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    >      <span class="navbar-toggler-icon"></span>
+  </button>
     <!-- Brand -->
     <a class="navbar-brand pt-0" href="/">
       <img
@@ -23,7 +23,6 @@
         alt="..."
       />
     </a>
-    <!-- User -->
     <ul class="nav align-items-center d-md-none">
       <li class="nav-item dropdown">
 
@@ -88,7 +87,7 @@
       <!-- Navigation -->
       <ul class="navbar-nav">
         <li class="pt-md-4 nav-item {% if 'index' in segment %} active {% endif %}">
-          <a class="nav-link" href="{% url 'home' %}">
+          <a class="nav-link" id='toggle-menu' href="/">
             <i class="ni ni-tv-2 text-primary"></i> Dashboard
           </a>
         </li>
@@ -107,9 +106,9 @@
       <!-- Divider -->
       <hr class="my-3" />
       <!-- Heading -->
-      <h6 class="navbar-heading text-muted">Linki</h6>
+      <!-- <h6 class="navbar-heading text-muted">Linki</h6> -->
       <!-- Navigation -->
-      <ul class="navbar-nav mb-md-3">
+      <!-- <ul class="navbar-nav mb-md-3">
         <li class="nav-item">
           <a
             class="nav-link"
@@ -118,22 +117,8 @@
           >
             <i class="ni ni-book-bookmark text-green"></i>Przydatny link 1
           </a>
-          <a
-            class="nav-link"
-            target="_blank"
-            href="#"
-          >
-            <i class="ni ni-book-bookmark text-green"></i>Przydatny link 2
-          </a>
-          <a
-            class="nav-link"
-            target="_blank"
-            href="#"
-          >
-            <i class="ni ni-book-bookmark text-green"></i>Przydatny link 3
-          </a>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 </nav>

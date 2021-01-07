@@ -24,10 +24,9 @@ width: 10px
             <h2 class="display-3 text-white">Szczegóły projektu</h2>
           </div>
           <div class="col-2 mt-5">
-            <form target="_blank" action="{% url 'project_pdf' pk=project.pk %}">
-                {% csrf_token %}
-                <button class='float-right btn btn-lg btn-secondary'>Pobierz PDF</button>
-            </form>
+            <a href="javascript:if(window.print)window.print()">
+                <button class='float-right btn btn-lg btn-secondary'>Drukuj</button>
+            </a>
 
           </div>
         </div>
