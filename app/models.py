@@ -60,7 +60,7 @@ class Checklist(models.Model):
     wykonanie_robót_w_terenie = models.BooleanField(default=False) 
     szkice_powykonawcze = models.BooleanField(default=False)
     zgłoszenie_zakończenia_budowy_do_PINB = models.BooleanField(default=False)
-    zaświadczenie_o_braku_sprzeciwu_wobec_przystąpienia_do_użytkowania = models.BooleanField(default=False)
+    zaświadczenie_o_braku_sprzeciwu_wobec_użytkowania = models.BooleanField(default=False)
     project = models.OneToOneField(Project, primary_key=True, on_delete=models.CASCADE)
 
 class ProjectFile(models.Model):
