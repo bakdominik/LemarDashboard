@@ -14,4 +14,5 @@ urlpatterns = [
     path("", include("authentication.urls")),  # add this
     path("", include("app.urls")),  # add this
     path('comment/', include('comment.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, 
+document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL, document_root=settings.MEDIA_URL)
