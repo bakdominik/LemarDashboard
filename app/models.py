@@ -12,7 +12,6 @@ from comment.models import Comment
 
 
 class Project(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     W_TRAKCIE = "W"
     ZAKOŃCZONY = "Z"
     PRZERWANY = "P"
@@ -35,7 +34,6 @@ class Project(models.Model):
         return self.title
 
 class Checklist(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     zlecenie_z_gazowni = models.BooleanField(default=False)
     warunki_techniczne = models.BooleanField(default=False)
     wypis_i_wyrys = models.BooleanField(default=False)
@@ -62,7 +60,7 @@ class Checklist(models.Model):
     szkice_powykonawcze = models.BooleanField(default=False)
     zgłoszenie_zakończenia_budowy_do_PINB = models.BooleanField(default=False)
     zaświadczenie_o_braku_sprzeciwu_wobec_użytkowania = models.BooleanField(default=False)
-    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+    project = models.OneToOneField(Project, primary_key=True,on_delete=models.CASCADE)
 
 class ProjectFile(models.Model):
     title = models.CharField(max_length=255)
