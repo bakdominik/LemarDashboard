@@ -12,6 +12,7 @@ from comment.models import Comment
 
 
 class Project(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     W_TRAKCIE = "W"
     ZAKOŃCZONY = "Z"
     PRZERWANY = "P"
