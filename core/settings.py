@@ -140,8 +140,10 @@ MEDIA_URL = '/media/'
 # Comments settings
 COMMENT_ALLOW_TRANSLATION = True
 
+
 django_heroku.settings(locals())
 
 if 'DATABASE_URL' in os.environ:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config()}
+

@@ -50,7 +50,8 @@ width: 10px
                         </div>
                         <div class="row my-2">
                             <div class="text-center col-6">
-                                <input style='font-size: 1.1rem;' class='form-control' name='localization' value={{project.localization}}>
+                                <input style='font-size: 1.1rem;' class='form-control' name='localization' 
+value="{{project.localization}}">
                             </div>
                             <div class="text-center col-6">
                                 <select style='font-size: 1.1rem;' required name="status" id="status" class="form-control">
@@ -166,7 +167,7 @@ width: 10px
                             <div class='col-12' style='overflow: auto;height:300px;overflow-x:hidden;'>
                                 {% for project_file in files  %}
                                 <div class=''>
-                                    <a  href="{{project_file.file.url}}" download ><h3 class='mt-2 text-white'>{{ project_file.title}}</h3></a>
+                                    <a target='_blank' href="{{project_file.file.url}}" download ><h3 class='mt-2 text-white'>{{project_file.title}}</h3></a>
                                     <hr class='mt-2 mb-5' style='border-top: 1px solid white'>
                                 </div>
                                 {% endfor %}
@@ -227,7 +228,7 @@ width: 10px
                                     {% for invoice in invoices %}
 
                                     <tr id="{{ invoice.pk }}">
-                                        <td style="width:50%"><a  href="{{invoice.invoice.url }}" download ><h4 style='white-space: pre-line;'class='mt-md-3 text-white'>{{ invoice.title}}</h4></a></td>
+                                        <td style="width:50%"><a target='_blank'  href="{{invoice.invoice.url }}" download><h4 style='white-space: pre-line;'class='mt-md-3 text-white'>{{ invoice.title}}</h4></a></td>
                                         <td style="width:50%">
 
                                             <select style='background-color: transparent;

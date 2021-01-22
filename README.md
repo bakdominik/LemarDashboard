@@ -1,4 +1,14 @@
+## Lemar Dashboard
+
+This commercial project was created to help Lemar in its daily work, project management, work structure and file storage.
+
 ## How to use it
+
+You can checkout project here https://immense-springs-42610.herokuapp.com/ using:
+Login:testowy
+Password:8eMmdd3x
+
+Or
 
 ```bash
 $ # Get the code
