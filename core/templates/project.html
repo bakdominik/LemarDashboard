@@ -81,12 +81,13 @@ width: 10px
                             <textarea style='font-size: 1.1rem; resize: none' class='form-control' name="project_object" cols="25" rows="10">{{project.project_object}}</textarea>
                         </div>
 
-                        <div class="col-12">
-                                        {% load comment_tags %}
-                                        {% render_comments project request %}
-                                </div>
+                        
 
                     </form>
+                    <div class="col-12">
+                        {% load comment_tags %}
+                        {% render_comments project request %}
+                    </div>
                     </div>
                     <div class="col-xl-4 px-md-5 ">
                         <div class="row">
