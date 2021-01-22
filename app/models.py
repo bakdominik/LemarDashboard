@@ -23,7 +23,7 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     localization = models.CharField(max_length=255,default="Kraków")
-    status = models.CharField(choices=STATUS_CHOICES,default=W_TRAKCIE)
+    status = models.CharField(max_length=30,choices=STATUS_CHOICES,default=W_TRAKCIE)
     date_started = models.DateField()
     value = models.IntegerField()
     comments = GenericRelation(Comment)
