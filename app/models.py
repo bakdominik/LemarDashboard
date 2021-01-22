@@ -27,8 +27,8 @@ class Project(models.Model):
     date_started = models.DateField()
     value = models.IntegerField()
     comments = GenericRelation(Comment)
-    investor = models.CharField(max_length=600)
-    project_object = models.CharField(max_length=2000)
+    investor = models.CharField(max_length=600,blank=True)
+    project_object = models.CharField(max_length=2000,blank=True)
 
     def __str__(self):
         return self.title
