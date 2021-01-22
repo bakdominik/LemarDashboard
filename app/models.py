@@ -23,18 +23,17 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     localization = models.CharField(max_length=255,default="Kraków")
-    status = models.CharField(max_length=1,choices=STATUS_CHOICES,default=W_TRAKCIE)
+    status = models.CharField(max_length=30,choices=STATUS_CHOICES,default=W_TRAKCIE)
     date_started = models.DateField()
     value = models.IntegerField()
     comments = GenericRelation(Comment)
-    investor = models.CharField(max_length=600)
-    project_object = models.CharField(max_length=2000)
+    investor = models.CharField(max_length=600,blank=True)
+    project_object = models.CharField(max_length=2000,blank=True)
 
     def __str__(self):
         return self.title
 
 class Checklist(models.Model):
-
     zlecenie_z_gazowni = models.BooleanField(default=False)
     warunki_techniczne = models.BooleanField(default=False)
     wypis_i_wyrys = models.BooleanField(default=False)
@@ -60,8 +59,8 @@ class Checklist(models.Model):
     wykonanie_robót_w_terenie = models.BooleanField(default=False) 
     szkice_powykonawcze = models.BooleanField(default=False)
     zgłoszenie_zakończenia_budowy_do_PINB = models.BooleanField(default=False)
-    zaświadczenie_o_braku_sprzeciwu_wobec_przystąpienia_do_użytkowania = models.BooleanField(default=False)
-    project = models.OneToOneField(Project, primary_key=True, on_delete=models.CASCADE)
+    zaświadczenie_o_braku_sprzeciwu_wobec_użytkowania = models.BooleanField(default=False)
+    project = models.OneToOneField(Project, primary_key=True,on_delete=models.CASCADE)
 
 class ProjectFile(models.Model):
     title = models.CharField(max_length=255)

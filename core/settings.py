@@ -8,6 +8,7 @@ import os
 from decouple import config
 from unipath import Path
 import dj_database_url
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +21,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = True
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.15']
+ALLOWED_HOSTS = ['immense-springs-42610.herokuapp.com','localhost', '127.0.0.1', '192.168.1.15']
 
 # Application definition
 
@@ -138,3 +139,11 @@ MEDIA_URL = '/media/'
 #############################################################
 # Comments settings
 COMMENT_ALLOW_TRANSLATION = True
+
+
+django_heroku.settings(locals())
+
+if 'DATABASE_URL' in os.environ:
+    import dj_database_url
+    DATABASES = {'default': dj_database_url.config()}
+
